@@ -5,9 +5,50 @@ import MatchResultForm from './MatchResultForm'
 import AdvancementResultForm from './AdvancementResultForm'
 
 const PHASE_LABELS = { group_stage: 'Group Stage', r16: 'Round of 16', qf: 'Quarter-Finals', sf: 'Semi-Finals', final: 'Final' }
+const ADMIN_PASSWORD = 'quiniela2026admin'
+
+function PasswordGate({ onUnlock }) {
+  const [input, setInput] = useState('')
+  const [error, setError] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (input === ADMIN_PASSWORD) {
+      sessionStorage.setItem('adminUnlocked', '1')
+      onUnlock()
+    } else {
+      setError(true)
+      setInput('')
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-bg flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
+        <h1 className="text-xl font-bold text-gray-900 mb-1">Admin Access</h1>
+        <p className="text-sm text-gray-400 mb-6">Enter the admin password to continue</p>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="password"
+            value={input}
+            onChange={e => { setInput(e.target.value); setError(false) }}
+            placeholder="Password"
+            autoFocus
+            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary"
+          />
+          {error && <p className="text-danger text-xs">Incorrect password</p>}
+          <button type="submit" className="w-full py-3 bg-primary text-white rounded-xl text-sm font-semibold">
+            Enter
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
 
 export default function AdminPage() {
   const { isAdmin, loading, matchesByPhase, results, advResults, saveMatchResult, saveAdvancementResult, syncMatches } = useAdmin()
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('adminUnlocked') === '1')
   const [syncing, setSyncing] = useState(false)
   const [syncResult, setSyncResult] = useState(null)
 
@@ -24,6 +65,7 @@ export default function AdminPage() {
     }
   }
 
+  if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />
   if (loading) return <div className="text-center text-gray-400 mt-10">Checking access...</div>
   if (!isAdmin) return <Navigate to="/" replace />
 
