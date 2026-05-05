@@ -6,6 +6,11 @@ const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
 function getPhase(round: string): string | null {
   if (round.toLowerCase().includes('group')) return 'group_stage'
   if (round === 'Round of 16') return 'r16'
@@ -27,7 +32,12 @@ function getGroupResult(homeGoals: number, awayGoals: number): string {
   return 'draw'
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
   try {
     const res = await fetch('https://v3.football.api-sports.io/fixtures?league=1&season=2026', {
       headers: { 'x-apisports-key': API_KEY },
@@ -36,7 +46,7 @@ Deno.serve(async () => {
     if (!res.ok) {
       return new Response(JSON.stringify({ error: 'API-Football request failed', status: res.status }), {
         status: 502,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
@@ -48,7 +58,7 @@ Deno.serve(async () => {
 
     for (const f of fixtures) {
       const phase = getPhase(f.league.round)
-      if (!phase) continue // skip 3rd place final etc.
+      if (!phase) continue
 
       const group_letter = phase === 'group_stage' && f.league.group
         ? f.league.group.replace('Group ', '').trim()
@@ -112,12 +122,12 @@ Deno.serve(async () => {
 
     return new Response(
       JSON.stringify({ success: true, matchesUpserted, resultsUpserted, errors }),
-      { headers: { 'Content-Type': 'application/json' } }
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
     return new Response(
       JSON.stringify({ success: false, error: (err as Error).message }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
