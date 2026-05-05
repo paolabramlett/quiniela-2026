@@ -25,8 +25,9 @@ export function AuthProvider({ children }) {
   }, [])
 
   const fetchProfile = async (userId) => {
-    const { data } = await supabase.from('users').select('*').eq('id', userId).single()
-    setProfile(data)
+    const { data, error } = await supabase.from('users').select('*').eq('id', userId).single()
+    if (error) console.error('fetchProfile error:', error)
+    setProfile(data ?? null)
     setLoading(false)
   }
 
@@ -45,4 +46,8 @@ export function AuthProvider({ children }) {
   )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  const ctx = useContext(AuthContext)
+  if (ctx === null) throw new Error('useAuth must be used within AuthProvider')
+  return ctx
+}
