@@ -71,5 +71,12 @@ export const useAdmin = () => {
     return acc
   }, {})
 
-  return { isAdmin, loading, matchesByPhase, results, advResults, saveMatchResult, saveAdvancementResult }
+  const syncMatches = async () => {
+    const { data, error } = await supabase.functions.invoke('sync-matches')
+    if (error) throw error
+    await fetchAll()
+    return data
+  }
+
+  return { isAdmin, loading, matchesByPhase, results, advResults, saveMatchResult, saveAdvancementResult, syncMatches }
 }
