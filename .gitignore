@@ -1,0 +1,25 @@
+# Vite
+/dist
+/dist-ssr
+*.local
+
+# Environment files
+.env.local
+.env*.local
+
+# Dependencies
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Superpowers
+.superpowers/
