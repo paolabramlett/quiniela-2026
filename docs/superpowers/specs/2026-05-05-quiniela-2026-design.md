@@ -161,7 +161,7 @@ A World Cup 2026 prediction platform where users predict match outcomes and adva
 - Cards: white with subtle shadow
 - Primary: `#1253ED`
 - Urgency/lockout: `#ef233c`
-- Font: system UI stack
+- Font: Poppins (Google Fonts)
 
 **Navigation:** Dashboard-first
 - Landing screen: score card (total points + global rank) + quick-action tiles (Make Picks, Rankings, My Group) + next lockout countdown
