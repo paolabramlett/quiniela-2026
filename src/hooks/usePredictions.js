@@ -1,0 +1,117 @@
+import { useState, useEffect, useCallback } from 'react'
+import { supabase } from '../utils/supabase'
+import { useAuth } from './useAuth'
+import { isMatchLocked } from '../utils/scoring'
+
+export const usePredictions = () => {
+  const { user } = useAuth()
+  const [matches, setMatches] = useState([])
+  const [groupPredictions, setGroupPredictions] = useState({})   // { matchId: 'home'|'draw'|'away' }
+  const [advancementPredictions, setAdvancementPredictions] = useState({}) // { groupLetter: ['Team1','Team2'] }
+  const [knockoutPredictions, setKnockoutPredictions] = useState({}) // { matchId: 'TeamName' }
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    if (!user) return
+    fetchAll()
+  }, [user])
+
+  const fetchAll = async () => {
+    setLoading(true)
+    try {
+      const [matchesRes, gspRes, gapRes, kpRes] = await Promise.all([
+        supabase.from('matches').select('*').order('kickoff_at'),
+        supabase.from('group_stage_predictions').select('*').eq('user_id', user.id),
+        supabase.from('group_advancement_predictions').select('*').eq('user_id', user.id),
+        supabase.from('knockout_predictions').select('*').eq('user_id', user.id),
+      ])
+
+      if (matchesRes.error) throw matchesRes.error
+
+      setMatches(matchesRes.data)
+
+      const gsp = {}
+      gspRes.data?.forEach(p => { gsp[p.match_id] = p.prediction })
+      setGroupPredictions(gsp)
+
+      const gap = {}
+      gapRes.data?.forEach(p => { gap[p.group_letter] = [p.team_1, p.team_2] })
+      setAdvancementPredictions(gap)
+
+      const kp = {}
+      kpRes.data?.forEach(p => { kp[p.match_id] = p.predicted_winner })
+      setKnockoutPredictions(kp)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const saveGroupPrediction = useCallback(async (matchId, prediction) => {
+    const match = matches.find(m => m.id === matchId)
+    if (!match || isMatchLocked(match.kickoff_at)) return
+
+    const { error } = await supabase
+      .from('group_stage_predictions')
+      .upsert({ user_id: user.id, match_id: matchId, prediction }, { onConflict: 'user_id,match_id' })
+
+    if (!error) setGroupPredictions(prev => ({ ...prev, [matchId]: prediction }))
+  }, [matches, user])
+
+  const saveAdvancementPrediction = useCallback(async (groupLetter, teams) => {
+    if (teams.length !== 2) return
+
+    // Check if first match of this group is locked
+    const firstMatch = matches
+      .filter(m => m.phase === 'group_stage' && m.group_letter === groupLetter)
+      .sort((a, b) => new Date(a.kickoff_at) - new Date(b.kickoff_at))[0]
+
+    if (firstMatch && isMatchLocked(firstMatch.kickoff_at)) return
+
+    const { error } = await supabase
+      .from('group_advancement_predictions')
+      .upsert(
+        { user_id: user.id, group_letter: groupLetter, team_1: teams[0], team_2: teams[1] },
+        { onConflict: 'user_id,group_letter' }
+      )
+
+    if (!error) setAdvancementPredictions(prev => ({ ...prev, [groupLetter]: teams }))
+  }, [matches, user])
+
+  const saveKnockoutPrediction = useCallback(async (matchId, winner) => {
+    const match = matches.find(m => m.id === matchId)
+    if (!match || isMatchLocked(match.kickoff_at)) return
+
+    const { error } = await supabase
+      .from('knockout_predictions')
+      .upsert({ user_id: user.id, match_id: matchId, predicted_winner: winner }, { onConflict: 'user_id,match_id' })
+
+    if (!error) setKnockoutPredictions(prev => ({ ...prev, [matchId]: winner }))
+  }, [matches, user])
+
+  const matchesByGroup = matches
+    .filter(m => m.phase === 'group_stage')
+    .reduce((acc, m) => {
+      if (!acc[m.group_letter]) acc[m.group_letter] = []
+      acc[m.group_letter].push(m)
+      return acc
+    }, {})
+
+  const knockoutMatches = matches.filter(m => m.phase !== 'group_stage')
+
+  return {
+    matches,
+    matchesByGroup,
+    knockoutMatches,
+    groupPredictions,
+    advancementPredictions,
+    knockoutPredictions,
+    loading,
+    error,
+    saveGroupPrediction,
+    saveAdvancementPrediction,
+    saveKnockoutPrediction,
+  }
+}
