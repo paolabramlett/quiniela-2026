@@ -14,7 +14,7 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-bg flex flex-col">
       {/* Desktop top nav */}
-      <nav className="hidden md:flex items-center justify-between bg-white shadow-sm px-6 py-3">
+      <nav className="hidden md:flex items-center justify-between bg-white shadow-sm px-6 py-3" aria-label="Main navigation">
         <span className="font-bold text-lg">⚽ Quiniela <span className="text-primary">2026</span></span>
         <div className="flex gap-6">
           {navItems.map(({ to, label }) => (
@@ -42,7 +42,7 @@ export default function AppLayout() {
       </main>
 
       {/* Mobile bottom tabs */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 flex" aria-label="Mobile navigation">
         {navItems.map(({ to, label, icon }) => (
           <NavLink
             key={to}
