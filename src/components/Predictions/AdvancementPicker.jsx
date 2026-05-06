@@ -10,7 +10,7 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
 
   return (
     <div>
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Who advances?</p>
+      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">¿QUIÉN AVANZA?</p>
       <div className="flex flex-wrap gap-2">
         {teams.map(team => {
           const selected = selection.includes(team)

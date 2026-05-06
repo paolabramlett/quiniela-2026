@@ -17,16 +17,16 @@ export default function GroupsPage() {
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  if (loading) return <div className="text-center text-gray-400 mt-10">Loading groups...</div>
+  if (loading) return <div className="text-center text-gray-400 mt-10">Cargando grupos...</div>
   if (error) return <div className="text-center text-danger mt-10">Error: {error}</div>
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">My Groups</h1>
+      <h1 className="text-xl font-bold text-gray-900 mb-4">Mis Grupos</h1>
 
       <div className="flex gap-2 mb-6">
-        <button onClick={() => setShowCreate(true)} className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold">+ Create Group</button>
-        <button onClick={() => setShowJoin(true)} className="flex-1 py-2.5 border border-primary text-primary rounded-xl text-sm font-semibold">Join Group</button>
+        <button onClick={() => setShowCreate(true)} className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold">+ Crear Grupo</button>
+        <button onClick={() => setShowJoin(true)} className="flex-1 py-2.5 border border-primary text-primary rounded-xl text-sm font-semibold">Unirse a un Grupo</button>
       </div>
 
       <div className="space-y-3">
@@ -39,7 +39,7 @@ export default function GroupsPage() {
               <div>
                 <p className="font-semibold text-gray-800">{group.name}</p>
                 <p className="text-xs text-gray-400">
-                  Code: <span className="font-mono font-bold tracking-wider text-gray-600">{group.invite_code}</span>
+                  Código: <span className="font-mono font-bold tracking-wider text-gray-600">{group.invite_code}</span>
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -47,7 +47,7 @@ export default function GroupsPage() {
                   onClick={e => { e.stopPropagation(); copyCode(group.invite_code) }}
                   className="text-xs text-primary font-medium"
                 >
-                  {copiedCode === group.invite_code ? '✓ Copied' : 'Copy'}
+                  {copiedCode === group.invite_code ? '✓ Copiado' : 'Copiar'}
                 </button>
                 <span className="text-gray-400 text-sm">{expandedGroup === group.id ? '▲' : '▼'}</span>
               </div>
@@ -62,7 +62,7 @@ export default function GroupsPage() {
         ))}
 
         {groups.length === 0 && (
-          <p className="text-center text-gray-400 mt-10">You haven't joined any groups yet.</p>
+          <p className="text-center text-gray-400 mt-10">Aún no te has unido a ningún grupo.</p>
         )}
       </div>
 

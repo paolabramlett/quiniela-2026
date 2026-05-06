@@ -2,10 +2,10 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 const navItems = [
-  { to: '/',            label: 'Home',    icon: '🏠' },
+  { to: '/',            label: 'Inicio',  icon: '🏠' },
   { to: '/predictions', label: 'Picks',   icon: '🎯' },
   { to: '/leaderboard', label: 'Ranking', icon: '🏆' },
-  { to: '/groups',      label: 'Group',   icon: '👥' },
+  { to: '/groups',      label: 'Grupo',   icon: '👥' },
 ]
 
 export default function AppLayout() {
@@ -32,7 +32,7 @@ export default function AppLayout() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-600">{profile?.display_name}</span>
-          <button onClick={signOut} className="text-sm text-gray-400 hover:text-danger">Sign out</button>
+          <button onClick={signOut} className="text-sm text-gray-400 hover:text-danger">Cerrar sesión</button>
         </div>
       </nav>
 

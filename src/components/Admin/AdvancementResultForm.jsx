@@ -31,8 +31,8 @@ export default function AdvancementResultForm({ groupLetter, teams, existingResu
   return (
     <div className="bg-white rounded-xl shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
-        <p className="text-sm font-semibold text-gray-700">Group {groupLetter} — Advancement</p>
-        {existingResult && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Entered</span>}
+        <p className="text-sm font-semibold text-gray-700">Grupo {groupLetter} — Clasificados</p>
+        {existingResult && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Guardado</span>}
       </div>
       <div className="flex flex-wrap gap-2 mb-3">
         {teams.map(team => (
@@ -52,7 +52,7 @@ export default function AdvancementResultForm({ groupLetter, teams, existingResu
         disabled={saving || selected.length !== 2}
         className="w-full py-2 bg-primary text-white rounded-lg text-xs font-semibold disabled:opacity-40"
       >
-        {saving ? 'Saving...' : 'Save Advancement'}
+        {saving ? 'Guardando...' : 'Guardar Clasificados'}
       </button>
     </div>
   )

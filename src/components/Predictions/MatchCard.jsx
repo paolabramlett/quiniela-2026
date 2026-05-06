@@ -7,9 +7,9 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
   const isUrgent = locked || (countdown && !countdown.includes('h'))
 
   const choices = [
-    { value: 'home', label: match.home_team },
-    ...(showDraw ? [{ value: 'draw', label: 'Draw' }] : []),
-    { value: 'away', label: match.away_team },
+    { value: 'home', label: match.home_team, ariaLabel: match.home_team },
+    ...(showDraw ? [{ value: 'draw', label: 'Empate', ariaLabel: 'draw' }] : []),
+    { value: 'away', label: match.away_team, ariaLabel: match.away_team },
   ]
 
   return (
@@ -18,14 +18,14 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
         <span className="text-sm font-medium text-gray-700 flex-1">{match.home_team}</span>
 
         <div className="flex gap-2">
-          {choices.map(({ value, label }) => {
+          {choices.map(({ value, label, ariaLabel }) => {
             const isSelected = prediction === value
             return (
               <button
                 key={value}
                 disabled={locked}
                 onClick={() => onPredict(match.id, value)}
-                aria-label={label}
+                aria-label={ariaLabel}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border
                   ${isSelected
                     ? 'bg-primary text-white border-primary'

@@ -24,10 +24,10 @@ export default function CreateGroupModal({ onCreate, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
       <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
-        <h2 className="text-lg font-bold mb-4">Create Group</h2>
+        <h2 className="text-lg font-bold mb-4">Crear Grupo</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase">Group Name</label>
+            <label className="text-xs font-semibold text-gray-500 uppercase">Nombre del grupo</label>
             <input
               value={name}
               onChange={e => setName(e.target.value)}
@@ -36,21 +36,21 @@ export default function CreateGroupModal({ onCreate, onClose }) {
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase">Max Members (optional)</label>
+            <label className="text-xs font-semibold text-gray-500 uppercase">Máximo de integrantes (opcional)</label>
             <input
               type="number"
               min="2"
               value={maxMembers}
               onChange={e => setMaxMembers(e.target.value)}
-              placeholder="Unlimited"
+              placeholder="Sin límite"
               className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
             />
           </div>
           {error && <p className="text-danger text-xs">{error}</p>}
           <div className="flex gap-2">
-            <button type="button" onClick={() => onClose(null)} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-500">Cancel</button>
+            <button type="button" onClick={() => onClose(null)} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-500">Cancelar</button>
             <button type="submit" disabled={loading} className="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-semibold disabled:opacity-50">
-              {loading ? 'Creating...' : 'Create'}
+              {loading ? 'Creando...' : 'Crear'}
             </button>
           </div>
         </form>

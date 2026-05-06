@@ -29,7 +29,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
         <p className="text-sm font-semibold text-gray-700">
           {match.home_team} vs {match.away_team}
         </p>
-        {existingResult && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Entered</span>}
+        {existingResult && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Guardado</span>}
       </div>
 
       {isGroupStage ? (
@@ -41,7 +41,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors
                 ${result === opt ? 'bg-primary text-white border-primary' : 'bg-bg text-gray-600 border-gray-200'}`}
             >
-              {opt === 'home' ? match.home_team : opt === 'away' ? match.away_team : 'Draw'}
+              {opt === 'home' ? match.home_team : opt === 'away' ? match.away_team : 'Empate'}
             </button>
           ))}
         </div>
@@ -67,7 +67,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
         disabled={saving || (isGroupStage ? !result : !winner)}
         className="mt-3 w-full py-2 bg-primary text-white rounded-lg text-xs font-semibold disabled:opacity-40"
       >
-        {saving ? 'Saving...' : 'Save Result'}
+        {saving ? 'Guardando...' : 'Guardar Resultado'}
       </button>
     </div>
   )

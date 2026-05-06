@@ -24,12 +24,12 @@ export default function LeaderboardPage() {
   const { user } = useAuth()
   const isInTop100 = entries.some(e => e.user_id === user?.id)
 
-  if (loading) return <div className="text-center text-gray-400 mt-10">Loading leaderboard...</div>
+  if (loading) return <div className="text-center text-gray-400 mt-10">Cargando ranking...</div>
   if (error) return <div className="text-center text-danger mt-10">Error: {error}</div>
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Global Ranking</h1>
+      <h1 className="text-xl font-bold text-gray-900 mb-4">Ranking Global</h1>
       <div className="space-y-2">
         {entries.map(entry => (
           <LeaderboardRow key={entry.user_id} entry={entry} isCurrentUser={entry.user_id === user?.id} />

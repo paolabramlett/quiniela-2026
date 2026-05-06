@@ -17,15 +17,15 @@ export default function Dashboard() {
   const countdown = nextMatch ? getCountdownLabel(nextMatch.kickoff_at) : null
 
   const quickActions = [
-    { label: 'Make Picks', icon: '🎯', to: '/predictions' },
+    { label: 'Hacer Picks', icon: '🎯', to: '/predictions' },
     { label: 'Rankings', icon: '🏆', to: '/leaderboard' },
-    { label: 'My Group', icon: '👥', to: '/groups' },
+    { label: 'Mi Grupo', icon: '👥', to: '/groups' },
   ]
 
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-gray-500 text-sm">Welcome back,</p>
+        <p className="text-gray-500 text-sm">Bienvenido/a,</p>
         <h1 className="text-2xl font-bold text-gray-900">{profile?.display_name} 👋</h1>
       </div>
 
@@ -33,12 +33,12 @@ export default function Dashboard() {
       <div className="bg-primary rounded-2xl p-5 text-white">
         <div className="flex justify-between items-start">
           <div>
-            <p className="text-primary-200 text-xs font-medium opacity-70">Your Score</p>
+            <p className="text-primary-200 text-xs font-medium opacity-70">Tu Puntaje</p>
             <p className="text-4xl font-extrabold mt-1">{userEntry?.total_points ?? 0}</p>
-            <p className="text-xs opacity-70 mt-1">{userEntry?.correct_predictions ?? 0} correct predictions</p>
+            <p className="text-xs opacity-70 mt-1">{userEntry?.correct_predictions ?? 0} predicciones correctas</p>
           </div>
           <div className="text-right">
-            <p className="text-xs opacity-70">Global Rank</p>
+            <p className="text-xs opacity-70">Posición Global</p>
             <p className="text-3xl font-extrabold mt-1">
               {userEntry?.rank ? `#${userEntry.rank}` : '—'}
             </p>
@@ -50,7 +50,7 @@ export default function Dashboard() {
       {nextMatch && countdown && (
         <div className="bg-white rounded-xl shadow-sm p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Next Lockout</p>
+            <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Próximo Cierre</p>
             <p className="text-sm font-semibold text-gray-700 mt-1">
               {nextMatch.home_team} vs {nextMatch.away_team}
             </p>

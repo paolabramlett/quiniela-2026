@@ -10,7 +10,7 @@ export default function GroupLeaderboard({ groupId, fetchGroupLeaderboard }) {
     fetchGroupLeaderboard(groupId).then(setEntries).finally(() => setLoading(false))
   }, [groupId])
 
-  if (loading) return <div className="text-center text-gray-400 py-4">Loading...</div>
+  if (loading) return <div className="text-center text-gray-400 py-4">Cargando...</div>
 
   return (
     <div className="space-y-2 mt-3">
@@ -21,7 +21,7 @@ export default function GroupLeaderboard({ groupId, fetchGroupLeaderboard }) {
           <span className="text-sm font-bold text-primary">{entry.total_points} pts</span>
         </div>
       ))}
-      {entries.length === 0 && <p className="text-sm text-gray-400 text-center py-4">No members have scored yet.</p>}
+      {entries.length === 0 && <p className="text-sm text-gray-400 text-center py-4">Nadie ha anotado puntos aún.</p>}
     </div>
   )
 }

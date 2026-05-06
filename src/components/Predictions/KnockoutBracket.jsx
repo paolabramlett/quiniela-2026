@@ -1,6 +1,6 @@
 import MatchCard from './MatchCard'
 
-const PHASE_LABELS = { r16: 'Round of 16', qf: 'Quarter-Finals', sf: 'Semi-Finals', final: 'Final' }
+const PHASE_LABELS = { r16: 'Octavos de Final', qf: 'Cuartos de Final', sf: 'Semifinales', final: 'Final' }
 
 export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, onPredict }) {
   const byPhase = knockoutMatches.reduce((acc, m) => {
