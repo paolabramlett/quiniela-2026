@@ -24,7 +24,7 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
               <button
                 key={value}
                 disabled={locked}
-                onClick={() => onPredict(match.id, value)}
+                onClick={() => onPredict(match.id, isSelected ? null : value)}
                 aria-label={ariaLabel}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border
                   ${isSelected

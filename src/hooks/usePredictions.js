@@ -53,11 +53,19 @@ export const usePredictions = () => {
     const match = matches.find(m => m.id === matchId)
     if (!match || isMatchLocked(match.kickoff_at)) return
 
-    const { error } = await supabase
-      .from('group_stage_predictions')
-      .upsert({ user_id: user.id, match_id: matchId, prediction }, { onConflict: 'user_id,match_id' })
-
-    if (!error) setGroupPredictions(prev => ({ ...prev, [matchId]: prediction }))
+    if (prediction === null) {
+      const { error } = await supabase
+        .from('group_stage_predictions')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('match_id', matchId)
+      if (!error) setGroupPredictions(prev => { const next = { ...prev }; delete next[matchId]; return next })
+    } else {
+      const { error } = await supabase
+        .from('group_stage_predictions')
+        .upsert({ user_id: user.id, match_id: matchId, prediction }, { onConflict: 'user_id,match_id' })
+      if (!error) setGroupPredictions(prev => ({ ...prev, [matchId]: prediction }))
+    }
   }, [matches, user])
 
   const saveAdvancementPrediction = useCallback(async (groupLetter, teams) => {
@@ -84,11 +92,19 @@ export const usePredictions = () => {
     const match = matches.find(m => m.id === matchId)
     if (!match || isMatchLocked(match.kickoff_at)) return
 
-    const { error } = await supabase
-      .from('knockout_predictions')
-      .upsert({ user_id: user.id, match_id: matchId, predicted_winner: winner }, { onConflict: 'user_id,match_id' })
-
-    if (!error) setKnockoutPredictions(prev => ({ ...prev, [matchId]: winner }))
+    if (winner === null) {
+      const { error } = await supabase
+        .from('knockout_predictions')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('match_id', matchId)
+      if (!error) setKnockoutPredictions(prev => { const next = { ...prev }; delete next[matchId]; return next })
+    } else {
+      const { error } = await supabase
+        .from('knockout_predictions')
+        .upsert({ user_id: user.id, match_id: matchId, predicted_winner: winner }, { onConflict: 'user_id,match_id' })
+      if (!error) setKnockoutPredictions(prev => ({ ...prev, [matchId]: winner }))
+    }
   }, [matches, user])
 
   const matchesByGroup = matches
