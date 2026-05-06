@@ -59,6 +59,15 @@ export default function AppLayout() {
           ))}
         </div>
         <div className="flex items-center gap-4">
+          <a
+            href="https://www.paolabramlett.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-700 hover:text-accent transition-colors uppercase tracking-widest font-semibold"
+          >
+            Por Paola ↗
+          </a>
+          <span className="text-gray-700">·</span>
           <span className="text-sm text-gray-500">{profile?.display_name}</span>
           <button
             onClick={signOut}
@@ -68,6 +77,31 @@ export default function AppLayout() {
           </button>
         </div>
       </nav>
+
+      {/* Mobile top bar — user info + actions */}
+      <div className="md:hidden flex items-center justify-between bg-card border-b border-line px-4 py-2.5">
+        <span className="font-display text-lg tracking-wider text-white">
+          QUINIELA <span className="text-primary">26</span>
+        </span>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://www.paolabramlett.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-accent transition-colors"
+          >
+            Por Paola ↗
+          </a>
+          <span className="text-gray-700 text-xs">·</span>
+          <span className="text-xs text-gray-500 font-semibold truncate max-w-24">{profile?.display_name}</span>
+          <button
+            onClick={signOut}
+            className="text-[10px] font-bold uppercase tracking-widest text-gray-600 hover:text-primary transition-colors"
+          >
+            Salir
+          </button>
+        </div>
+      </div>
 
       {/* Page content */}
       <main className="flex-1 pb-24 md:pb-0 max-w-2xl w-full mx-auto px-4 py-6">
