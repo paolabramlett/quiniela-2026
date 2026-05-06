@@ -30,16 +30,25 @@ export default function LeaderboardPage() {
   return (
     <div>
       <h1 className="text-xl font-bold text-gray-900 mb-4">Ranking Global</h1>
-      <div className="space-y-2">
-        {entries.map(entry => (
-          <LeaderboardRow key={entry.user_id} entry={entry} isCurrentUser={entry.user_id === user?.id} />
-        ))}
-      </div>
-
-      {!isInTop100 && userEntry && (
-        <div className="mt-4 border-t border-gray-200 pt-4">
-          <LeaderboardRow entry={userEntry} isCurrentUser />
+      {entries.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-5xl mb-4">🏆</p>
+          <p className="font-semibold text-gray-700">El ranking está vacío por ahora</p>
+          <p className="text-sm text-gray-400 mt-2">Se activará cuando comiencen los partidos el 11 de junio</p>
         </div>
+      ) : (
+        <>
+          <div className="space-y-2">
+            {entries.map(entry => (
+              <LeaderboardRow key={entry.user_id} entry={entry} isCurrentUser={entry.user_id === user?.id} />
+            ))}
+          </div>
+          {!isInTop100 && userEntry && (
+            <div className="mt-4 border-t border-gray-200 pt-4">
+              <LeaderboardRow entry={userEntry} isCurrentUser />
+            </div>
+          )}
+        </>
       )}
     </div>
   )
