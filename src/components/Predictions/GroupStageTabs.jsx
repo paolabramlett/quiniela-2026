@@ -8,13 +8,17 @@ export default function GroupStageTabs({ matchesByGroup, groupPredictions, advan
 
   return (
     <div>
-      <div className="flex overflow-x-auto gap-1 pb-2 mb-4 no-scrollbar">
+      {/* Group letter selector */}
+      <div className="flex overflow-x-auto gap-1.5 pb-2 mb-5 no-scrollbar">
         {GROUP_LETTERS.map(letter => (
           <button
             key={letter}
             onClick={() => setActive(letter)}
-            className={`flex-shrink-0 w-9 h-9 rounded-lg text-sm font-bold transition-colors
-              ${active === letter ? 'bg-primary text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
+            className={`flex-shrink-0 w-9 h-9 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors
+              ${active === letter
+                ? 'bg-primary text-white'
+                : 'bg-card border border-line text-gray-500 hover:border-gray-500 hover:text-white'
+              }`}
           >
             {letter}
           </button>

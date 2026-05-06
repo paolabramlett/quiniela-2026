@@ -24,9 +24,9 @@ function PasswordGate({ onUnlock }) {
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-sm p-8 w-full max-w-sm">
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Acceso Admin</h1>
-        <p className="text-sm text-gray-400 mb-6">Ingresa la contraseña de admin para continuar</p>
+      <div className="bg-card border border-line rounded-2xl p-8 w-full max-w-sm">
+        <h1 className="font-display text-2xl tracking-wider text-white mb-1">ACCESO ADMIN</h1>
+        <p className="text-xs text-gray-600 mb-6 uppercase tracking-widest font-semibold">Solo para administradores</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="password"
@@ -34,10 +34,10 @@ function PasswordGate({ onUnlock }) {
             onChange={e => { setInput(e.target.value); setError(false) }}
             placeholder="Contraseña"
             autoFocus
-            className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary"
+            className="w-full bg-surface border border-line rounded-xl px-4 py-3 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
           />
-          {error && <p className="text-danger text-xs">Contraseña incorrecta</p>}
-          <button type="submit" className="w-full py-3 bg-primary text-white rounded-xl text-sm font-semibold">
+          {error && <p className="text-danger text-xs font-semibold">Contraseña incorrecta</p>}
+          <button type="submit" className="w-full py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-red-600 transition-colors">
             Ingresar
           </button>
         </form>
@@ -66,31 +66,41 @@ export default function AdminPage() {
   }
 
   if (!unlocked) return <PasswordGate onUnlock={() => setUnlocked(true)} />
-  if (loading) return <div className="text-center text-gray-400 mt-10">Verificando acceso...</div>
+  if (loading) return (
+    <div className="flex items-center justify-center mt-20">
+      <p className="text-gray-600 text-sm font-bold uppercase tracking-widest">Verificando...</p>
+    </div>
+  )
   if (!isAdmin) return <Navigate to="/" replace />
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Admin — Ingresar Resultados</h1>
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-0.5">Panel</p>
+          <h1 className="font-display text-3xl tracking-wider text-white">ADMIN</h1>
+        </div>
         <button
           onClick={handleSync}
           disabled={syncing}
-          className="px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold disabled:opacity-50"
+          className="px-4 py-2 bg-surface border border-line text-gray-300 rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-40 hover:border-gray-500 hover:text-white transition-colors"
         >
           {syncing ? 'Sincronizando...' : '↻ Sincronizar'}
         </button>
       </div>
       {syncResult && (
-        <p className={`text-sm mb-4 ${syncResult.ok ? 'text-green-600' : 'text-danger'}`}>{syncResult.msg}</p>
+        <p className={`text-xs font-semibold mb-4 ${syncResult.ok ? 'text-accent' : 'text-danger'}`}>{syncResult.msg}</p>
       )}
 
       {['group_stage', 'r16', 'qf', 'sf', 'final'].map(phase => (
         matchesByPhase[phase]?.length > 0 && (
           <div key={phase} className="mb-8">
-            <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
-              {PHASE_LABELS[phase]}
-            </h2>
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600">
+                {PHASE_LABELS[phase]}
+              </span>
+              <div className="h-px flex-1 bg-line" />
+            </div>
             <div className="space-y-3">
               {matchesByPhase[phase].map(match => (
                 <MatchResultForm
@@ -107,9 +117,12 @@ export default function AdminPage() {
 
       {matchesByPhase['group_stage']?.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">
-            Clasificación de Grupos
-          </h2>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600">
+              Clasificación de Grupos
+            </span>
+            <div className="h-px flex-1 bg-line" />
+          </div>
           <div className="space-y-3">
             {['A','B','C','D','E','F','G','H','I','J','K','L'].map(letter => {
               const groupMatches = matchesByPhase['group_stage'].filter(m => m.group_letter === letter)

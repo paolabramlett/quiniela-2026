@@ -12,10 +12,10 @@ export default function GroupsPage() {
   const [showJoin, setShowJoin] = useState(false)
   const [expandedGroup, setExpandedGroup] = useState(null)
   const [copiedCode, setCopiedCode] = useState(null)
-  const [editingGroup, setEditingGroup] = useState(null) // { id, name }
+  const [editingGroup, setEditingGroup] = useState(null)
   const [editName, setEditName] = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
-  const [deletingGroup, setDeletingGroup] = useState(null) // group id pending confirm
+  const [deletingGroup, setDeletingGroup] = useState(null)
 
   const atLimit = groups.length >= maxGroups
 
@@ -54,36 +54,47 @@ export default function GroupsPage() {
     if (expandedGroup === groupId) setExpandedGroup(null)
   }
 
-  if (loading) return <div className="text-center text-gray-400 mt-10">Cargando grupos...</div>
-  if (error) return <div className="text-center text-danger mt-10">Error: {error}</div>
+  if (loading) return (
+    <div className="flex items-center justify-center mt-20">
+      <p className="text-gray-600 text-sm font-semibold uppercase tracking-widest">Cargando...</p>
+    </div>
+  )
+  if (error) return <div className="text-center text-danger mt-10 text-sm">{error}</div>
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Mis Grupos</h1>
+      {/* Header */}
+      <div className="mb-6 animate-fade-up">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-0.5">Gestiona</p>
+        <h1 className="font-display text-4xl tracking-wider text-white">MIS GRUPOS</h1>
+      </div>
 
+      {/* Limit warning */}
       {atLimit && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-4 text-sm text-yellow-800">
-          Alcanzaste el límite de {maxGroups} grupos. Sal de uno para poder unirte o crear otro.
+        <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3 mb-5 text-sm text-gold font-semibold">
+          Límite de {maxGroups} grupos alcanzado — sal de uno para unirte o crear otro.
         </div>
       )}
 
+      {/* Action buttons */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setShowCreate(true)}
           disabled={atLimit}
-          className="flex-1 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold disabled:opacity-40"
+          className="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-30 hover:bg-red-600 transition-colors"
         >
           + Crear Grupo
         </button>
         <button
           onClick={() => setShowJoin(true)}
           disabled={atLimit}
-          className="flex-1 py-2.5 border border-primary text-primary rounded-xl text-sm font-semibold disabled:opacity-40"
+          className="flex-1 py-3 border border-line text-gray-300 rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-30 hover:border-gray-500 hover:text-white transition-colors"
         >
-          Unirse a un Grupo
+          Unirse
         </button>
       </div>
 
+      {/* Groups list */}
       <div className="space-y-3">
         {groups.map(group => {
           const isCreator = group.created_by === user?.id
@@ -91,9 +102,10 @@ export default function GroupsPage() {
           const isConfirmingDelete = deletingGroup === group.id
 
           return (
-            <div key={group.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div key={group.id} className="bg-card border border-line rounded-xl overflow-hidden">
+              {/* Group row */}
               <div
-                className="flex items-center justify-between p-4 cursor-pointer"
+                className="flex items-center justify-between px-4 py-4 cursor-pointer hover:bg-surface transition-colors"
                 onClick={() => !isEditing && setExpandedGroup(expandedGroup === group.id ? null : group.id)}
               >
                 <div className="flex-1 min-w-0 mr-3">
@@ -103,60 +115,82 @@ export default function GroupsPage() {
                         value={editName}
                         onChange={e => setEditName(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter') saveEdit(group.id); if (e.key === 'Escape') setEditingGroup(null) }}
-                        className="flex-1 border border-primary rounded-lg px-2 py-1 text-sm focus:outline-none"
+                        className="flex-1 bg-surface border border-primary rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none"
                         autoFocus
                       />
-                      <button onClick={() => saveEdit(group.id)} disabled={savingEdit} className="text-xs text-primary font-semibold">
-                        {savingEdit ? '...' : 'Guardar'}
+                      <button onClick={() => saveEdit(group.id)} disabled={savingEdit} className="text-xs text-primary font-bold uppercase tracking-wider">
+                        {savingEdit ? '...' : 'OK'}
                       </button>
-                      <button onClick={() => setEditingGroup(null)} className="text-xs text-gray-400">Cancelar</button>
+                      <button onClick={() => setEditingGroup(null)} className="text-xs text-gray-600 uppercase tracking-wider font-bold">✕</button>
                     </div>
                   ) : (
                     <>
-                      <p className="font-semibold text-gray-800 truncate">{group.name}</p>
-                      <p className="text-xs text-gray-400">
-                        Código: <span className="font-mono font-bold tracking-wider text-gray-600">{group.invite_code}</span>
+                      <p className="font-semibold text-white truncate">{group.name}</p>
+                      <p className="text-[10px] text-gray-600 mt-0.5 font-mono tracking-[0.2em]">
+                        {group.invite_code}
                       </p>
                     </>
                   )}
                 </div>
 
                 {!isEditing && (
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <button onClick={e => { e.stopPropagation(); copyCode(group.invite_code) }} className="text-xs text-primary font-medium">
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <button
+                      onClick={e => { e.stopPropagation(); copyCode(group.invite_code) }}
+                      className="text-[10px] font-bold uppercase tracking-wider text-gray-600 hover:text-accent transition-colors"
+                    >
                       {copiedCode === group.invite_code ? '✓ Copiado' : 'Copiar'}
                     </button>
                     {isCreator && (
-                      <button onClick={e => startEdit(e, group)} className="text-gray-400 hover:text-gray-600 text-sm" title="Editar nombre">✏️</button>
+                      <button
+                        onClick={e => startEdit(e, group)}
+                        className="text-gray-700 hover:text-white transition-colors text-sm"
+                        title="Editar nombre"
+                      >
+                        ✏️
+                      </button>
                     )}
                     <button
                       onClick={e => { e.stopPropagation(); setDeletingGroup(group.id) }}
-                      className="text-gray-400 hover:text-danger text-sm"
+                      className="text-gray-700 hover:text-danger transition-colors text-sm"
                       title={isCreator ? 'Eliminar grupo' : 'Salir del grupo'}
                     >
                       {isCreator ? '🗑️' : '↩️'}
                     </button>
-                    <span className="text-gray-400 text-sm">{expandedGroup === group.id ? '▲' : '▼'}</span>
+                    <span className="text-gray-700 text-xs">{expandedGroup === group.id ? '▲' : '▼'}</span>
                   </div>
                 )}
               </div>
 
+              {/* Delete confirm */}
               {isConfirmingDelete && (
-                <div className="border-t border-gray-100 px-4 py-3 bg-red-50 flex items-center justify-between gap-3" onClick={e => e.stopPropagation()}>
-                  <p className="text-sm text-danger font-medium">
+                <div
+                  className="border-t border-line px-4 py-3 bg-danger/5 flex items-center justify-between gap-3"
+                  onClick={e => e.stopPropagation()}
+                >
+                  <p className="text-sm text-danger font-semibold">
                     {isCreator ? '¿Eliminar este grupo?' : '¿Salir de este grupo?'}
                   </p>
                   <div className="flex gap-2">
-                    <button onClick={() => setDeletingGroup(null)} className="text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5">Cancelar</button>
-                    <button onClick={() => confirmDelete(group.id)} className="text-xs text-white bg-danger rounded-lg px-3 py-1.5 font-semibold">
+                    <button
+                      onClick={() => setDeletingGroup(null)}
+                      className="text-xs text-gray-500 border border-line rounded-lg px-3 py-1.5 hover:border-gray-500 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={() => confirmDelete(group.id)}
+                      className="text-xs text-white bg-danger rounded-lg px-3 py-1.5 font-bold"
+                    >
                       {isCreator ? 'Eliminar' : 'Salir'}
                     </button>
                   </div>
                 </div>
               )}
 
+              {/* Leaderboard */}
               {expandedGroup === group.id && !isConfirmingDelete && (
-                <div className="border-t border-gray-100 px-4 pb-4">
+                <div className="border-t border-line px-4 pb-4">
                   <GroupLeaderboard groupId={group.id} fetchGroupLeaderboard={fetchGroupLeaderboard} />
                 </div>
               )}
@@ -165,7 +199,12 @@ export default function GroupsPage() {
         })}
 
         {groups.length === 0 && (
-          <p className="text-center text-gray-400 mt-10">Aún no te has unido a ningún grupo.</p>
+          <div className="text-center py-20">
+            <p className="font-display text-6xl text-line mb-4">GRP</p>
+            <p className="text-sm text-gray-600 uppercase tracking-widest font-bold">
+              Aún no te has unido a ningún grupo
+            </p>
+          </div>
         )}
       </div>
 

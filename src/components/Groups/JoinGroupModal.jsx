@@ -21,24 +21,36 @@ export default function JoinGroupModal({ onJoin, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
-        <h2 className="text-lg font-bold mb-4">Unirse a un Grupo</h2>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+      <div className="bg-card border border-line rounded-2xl p-6 w-full max-w-sm">
+        <h2 className="font-display text-2xl tracking-wider text-white mb-5">UNIRSE A GRUPO</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase">Código de invitación</label>
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 block mb-1.5">
+              Código de invitación
+            </label>
             <input
               value={code}
               onChange={e => setCode(e.target.value.toUpperCase().slice(0, 6))}
               placeholder="ABC123"
-              className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono tracking-widest text-center focus:outline-none focus:border-primary"
+              className="w-full bg-surface border border-line rounded-lg px-3 py-2.5 text-sm font-mono tracking-[0.3em] text-center text-white placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
             />
           </div>
-          {error && <p className="text-danger text-xs">{error}</p>}
-          <div className="flex gap-2">
-            <button type="button" onClick={onClose} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-500">Cancelar</button>
-            <button type="submit" disabled={loading || code.length !== 6} className="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-semibold disabled:opacity-50">
-              {loading ? 'Uniéndose...' : 'Unirse'}
+          {error && <p className="text-danger text-xs font-semibold">{error}</p>}
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-2.5 border border-line text-gray-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:border-gray-500 hover:text-white transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading || code.length !== 6}
+              className="flex-1 py-2.5 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-40 hover:bg-red-600 transition-colors"
+            >
+              {loading ? '...' : 'Unirse'}
             </button>
           </div>
         </form>

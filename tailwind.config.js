@@ -4,12 +4,18 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
+        sans: ['Noto Sans', 'sans-serif'],
+        display: ['Bebas Neue', 'cursive'],
       },
       colors: {
-        primary: '#1253ED',
-        danger: '#ef233c',
-        bg: '#f0f4ff',
+        primary: '#E8351E',
+        accent:  '#00C4A7',
+        gold:    '#F5C400',
+        danger:  '#E8351E',
+        bg:      '#080808',
+        card:    '#111111',
+        surface: '#1A1A1A',
+        line:    '#272727',
       },
     },
   },

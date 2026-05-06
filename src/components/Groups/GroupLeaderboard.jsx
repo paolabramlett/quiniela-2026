@@ -10,18 +10,41 @@ export default function GroupLeaderboard({ groupId, fetchGroupLeaderboard }) {
     fetchGroupLeaderboard(groupId).then(setEntries).finally(() => setLoading(false))
   }, [groupId])
 
-  if (loading) return <div className="text-center text-gray-400 py-4">Cargando...</div>
+  if (loading) return (
+    <div className="text-center py-6">
+      <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">Cargando...</p>
+    </div>
+  )
+
+  if (entries.length === 0) return (
+    <p className="text-xs text-gray-700 text-center py-6 uppercase tracking-widest font-bold">
+      Nadie ha anotado puntos aún
+    </p>
+  )
 
   return (
     <div className="space-y-2 mt-3">
-      {entries.map(entry => (
-        <div key={entry.user_id} className={`flex items-center gap-3 p-3 rounded-xl shadow-sm ${entry.user_id === user?.id ? 'bg-primary/10 border border-primary/30' : 'bg-white'}`}>
-          <span className="w-6 text-xs font-bold text-gray-400">#{entry.rank}</span>
-          <span className="flex-1 text-sm font-medium">{entry.display_name}</span>
-          <span className="text-sm font-bold text-primary">{entry.total_points} pts</span>
-        </div>
-      ))}
-      {entries.length === 0 && <p className="text-sm text-gray-400 text-center py-4">Nadie ha anotado puntos aún.</p>}
+      {entries.map(entry => {
+        const isMe = entry.user_id === user?.id
+        return (
+          <div
+            key={entry.user_id}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-colors
+              ${isMe ? 'bg-primary/10 border-primary/30' : 'bg-surface border-line'}`}
+          >
+            <span className={`font-display text-lg w-6 text-center leading-none ${isMe ? 'text-primary' : 'text-gray-600'}`}>
+              {entry.rank}
+            </span>
+            <span className={`flex-1 text-sm font-semibold truncate ${isMe ? 'text-white' : 'text-gray-300'}`}>
+              {entry.display_name}
+            </span>
+            <span className={`font-display text-lg leading-none ${isMe ? 'text-primary' : 'text-white'}`}>
+              {entry.total_points}
+              <span className="text-[10px] text-gray-600 ml-0.5 font-sans font-bold">pts</span>
+            </span>
+          </div>
+        )
+      })}
     </div>
   )
 }

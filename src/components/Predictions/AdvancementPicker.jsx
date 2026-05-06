@@ -10,7 +10,9 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
 
   return (
     <div>
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">¿QUIÉN AVANZA?</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-3">
+        ¿Quién avanza? <span className="text-gray-700">(elige 2)</span>
+      </p>
       <div className="flex flex-wrap gap-2">
         {teams.map(team => {
           const selected = selection.includes(team)
@@ -21,9 +23,12 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
               disabled={locked || maxed}
               onClick={() => toggle(team)}
               aria-label={team}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors
-                ${selected ? 'bg-primary text-white border-primary' : 'bg-bg text-gray-600 border-gray-200'}
-                ${maxed ? 'opacity-40' : 'hover:border-primary'}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all
+                ${selected
+                  ? 'bg-accent border-accent text-black'
+                  : 'bg-surface border-line text-gray-400 hover:border-gray-500 hover:text-white'
+                }
+                ${maxed ? 'opacity-30' : ''}
                 disabled:cursor-not-allowed`}
             >
               {team}

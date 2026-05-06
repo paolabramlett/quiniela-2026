@@ -8,7 +8,13 @@ export default function GroupTab({ groupLetter, matches, groupPredictions, advan
   const advancementLocked = firstMatch ? isMatchLocked(firstMatch.kickoff_at) : false
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2.5">
+      {/* Group header */}
+      <div className="flex items-center gap-3 mb-4">
+        <span className="font-display text-3xl text-white tracking-wider">GRUPO {groupLetter}</span>
+        <div className="h-px flex-1 bg-line" />
+      </div>
+
       {matches.map(match => (
         <MatchCard
           key={match.id}
@@ -17,7 +23,9 @@ export default function GroupTab({ groupLetter, matches, groupPredictions, advan
           onPredict={onPredict}
         />
       ))}
-      <div className="bg-white rounded-xl shadow-sm p-4">
+
+      {/* Advancement picker */}
+      <div className="bg-card border border-line rounded-xl p-4 mt-1">
         <AdvancementPicker
           teams={teams}
           selection={advancementPrediction ?? []}

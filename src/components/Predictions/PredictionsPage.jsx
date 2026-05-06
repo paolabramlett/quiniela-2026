@@ -12,20 +12,32 @@ export default function PredictionsPage() {
     saveGroupPrediction, saveAdvancementPrediction, saveKnockoutPrediction,
   } = usePredictions()
 
-  if (loading) return <div className="text-center text-gray-400 mt-10">Cargando predicciones...</div>
-  if (error) return <div className="text-center text-danger mt-10">Error: {error}</div>
+  if (loading) return (
+    <div className="flex items-center justify-center mt-20">
+      <p className="text-gray-600 text-sm font-semibold uppercase tracking-widest">Cargando...</p>
+    </div>
+  )
+  if (error) return <div className="text-center text-danger mt-10 text-sm">{error}</div>
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Mis Picks</h1>
+      {/* Header */}
+      <div className="mb-6 animate-fade-up">
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-0.5">Selecciona</p>
+        <h1 className="font-display text-4xl tracking-wider text-white">MIS PICKS</h1>
+      </div>
 
-      <div className="flex gap-2 mb-6">
+      {/* Tab switcher */}
+      <div className="flex gap-2 mb-6 p-1 bg-card border border-line rounded-xl">
         {['groups', 'knockout'].map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors
-              ${tab === t ? 'bg-primary text-white' : 'bg-white text-gray-500 border border-gray-200'}`}
+            className={`flex-1 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors
+              ${tab === t
+                ? 'bg-primary text-white'
+                : 'text-gray-600 hover:text-white'
+              }`}
           >
             {t === 'groups' ? 'Fase de Grupos' : 'Eliminatorias'}
           </button>

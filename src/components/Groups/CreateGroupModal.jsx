@@ -22,35 +22,49 @@ export default function CreateGroupModal({ onCreate, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
-        <h2 className="text-lg font-bold mb-4">Crear Grupo</h2>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+      <div className="bg-card border border-line rounded-2xl p-6 w-full max-w-sm">
+        <h2 className="font-display text-2xl tracking-wider text-white mb-5">CREAR GRUPO</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase">Nombre del grupo</label>
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 block mb-1.5">
+              Nombre del grupo
+            </label>
             <input
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Los Campeones"
-              className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              className="w-full bg-surface border border-line rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-gray-500 uppercase">Máximo de integrantes (opcional)</label>
+            <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 block mb-1.5">
+              Máx. de integrantes <span className="text-gray-700">(opcional)</span>
+            </label>
             <input
               type="number"
               min="2"
               value={maxMembers}
               onChange={e => setMaxMembers(e.target.value)}
               placeholder="Sin límite"
-              className="mt-1 w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary"
+              className="w-full bg-surface border border-line rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
             />
           </div>
-          {error && <p className="text-danger text-xs">{error}</p>}
-          <div className="flex gap-2">
-            <button type="button" onClick={() => onClose(null)} className="flex-1 py-2 border border-gray-200 rounded-lg text-sm text-gray-500">Cancelar</button>
-            <button type="submit" disabled={loading} className="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-semibold disabled:opacity-50">
-              {loading ? 'Creando...' : 'Crear'}
+          {error && <p className="text-danger text-xs font-semibold">{error}</p>}
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => onClose(null)}
+              className="flex-1 py-2.5 border border-line text-gray-500 rounded-xl text-xs font-bold uppercase tracking-widest hover:border-gray-500 hover:text-white transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-2.5 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-40 hover:bg-red-600 transition-colors"
+            >
+              {loading ? '...' : 'Crear'}
             </button>
           </div>
         </form>
