@@ -83,8 +83,6 @@ export const usePredictions = () => {
   }, [matches, user])
 
   const saveAdvancementPrediction = useCallback(async (groupLetter, teams) => {
-    if (teams.length !== 2) return
-
     // Check if first match of this group is locked
     const firstMatch = matches
       .filter(m => m.phase === 'group_stage' && m.group_letter === groupLetter)
@@ -92,14 +90,18 @@ export const usePredictions = () => {
 
     if (firstMatch && isMatchLocked(firstMatch.kickoff_at)) return
 
-    const { error } = await supabase
+    // Update local state immediately so buttons respond on first click
+    setAdvancementPredictions(prev => ({ ...prev, [groupLetter]: teams }))
+
+    // Only persist to DB once both teams are chosen
+    if (teams.length !== 2) return
+
+    await supabase
       .from('group_advancement_predictions')
       .upsert(
         { user_id: user.id, group_letter: groupLetter, team_1: teams[0], team_2: teams[1] },
         { onConflict: 'user_id,group_letter' }
       )
-
-    if (!error) setAdvancementPredictions(prev => ({ ...prev, [groupLetter]: teams }))
   }, [matches, user])
 
   const saveKnockoutPrediction = useCallback(async (matchId, winner) => {
