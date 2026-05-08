@@ -163,10 +163,14 @@ export const useGroups = () => {
       .map(uid => {
         const profile = profileMap[uid] ?? {}
         const entry = lbMap[uid] ?? {}
+        // leaderboard_group runs as security definer so it always has display_name;
+        // profiles direct query needs the public-read policy (009_profiles_public_read.sql)
+        const display_name = profile.display_name || entry.display_name || null
+        const avatar_url   = profile.avatar_url   || entry.avatar_url   || null
         return {
           user_id: uid,
-          display_name: profile.display_name ?? entry.display_name ?? 'Usuario',
-          avatar_url: profile.avatar_url ?? entry.avatar_url ?? null,
+          display_name,
+          avatar_url,
           total_points: entry.total_points ?? 0,
           rank: entry.rank ?? null,
         }
