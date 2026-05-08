@@ -48,7 +48,7 @@ export default function GroupsPage() {
       setShowPaywall(true)
       setSearchParams({}, { replace: true })
     }
-  }, [paymentParam])
+  }, [paymentParam, fetchCredits, setSearchParams])
 
   const handleCreateClick = () => {
     if (canCreateGroup) {
