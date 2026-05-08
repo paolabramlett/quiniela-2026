@@ -15,6 +15,20 @@ export const usePredictions = () => {
   useEffect(() => {
     if (!user) return
     fetchAll()
+
+    // Real-time: update match status live when sync-matches writes to DB
+    const matchSub = supabase
+      .channel('matches-live')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, (payload) => {
+        setMatches(prev => prev.map(m => m.id === payload.new.id ? { ...m, ...payload.new } : m))
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'match_results' }, () => {
+        // A result was added or updated — refetch matches to pick up joined result data
+        fetchAll()
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(matchSub) }
   }, [user])
 
   const fetchAll = async () => {
