@@ -93,16 +93,23 @@ export const usePredictions = () => {
     // Update local state immediately so buttons respond on first click
     setAdvancementPredictions(prev => ({ ...prev, [groupLetter]: teams }))
 
-    // Only persist to DB once both teams are chosen
-    if (teams.length !== 2) return
-
-    const { error } = await supabase
-      .from('group_advancement_predictions')
-      .upsert(
-        { user_id: user.id, group_letter: groupLetter, team_1: teams[0], team_2: teams[1] },
-        { onConflict: 'user_id,group_letter' }
-      )
-    if (error) console.error('saveAdvancementPrediction upsert failed:', error)
+    if (teams.length === 2) {
+      // Both teams chosen — persist to DB
+      const { error } = await supabase
+        .from('group_advancement_predictions')
+        .upsert(
+          { user_id: user.id, group_letter: groupLetter, team_1: teams[0], team_2: teams[1] },
+          { onConflict: 'user_id,group_letter' }
+        )
+      if (error) console.error('saveAdvancementPrediction upsert failed:', error)
+    } else {
+      // Partial selection — clear any previous DB record so refresh doesn't restore stale data
+      await supabase
+        .from('group_advancement_predictions')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('group_letter', groupLetter)
+    }
   }, [matches, user])
 
   const saveKnockoutPrediction = useCallback(async (matchId, winner) => {
