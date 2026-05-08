@@ -93,7 +93,7 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
 
                 {/* Name */}
                 <span className={`flex-1 text-sm font-semibold truncate ${isMe ? 'text-white' : 'text-gray-300'}`}>
-                  {member.display_name}
+                  {member.display_name ?? 'Jugador'}
                   {isMe && (
                     <span className="ml-2 text-[10px] font-bold uppercase tracking-widest text-primary">Tú</span>
                   )}
