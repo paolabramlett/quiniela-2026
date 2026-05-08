@@ -3,6 +3,7 @@ import { supabase } from '../utils/supabase'
 import { useAuth } from './useAuth'
 
 const MAX_GROUPS = 10
+const ADMIN_EMAIL = 'paolabramlett@gmail.com'
 
 const generateInviteCode = () => {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -12,18 +13,19 @@ const generateInviteCode = () => {
 export const useGroups = () => {
   const { user } = useAuth()
   const [groups, setGroups] = useState([])
+  const [credits, setCredits] = useState(null) // { slots_purchased, granted_free } | null
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!user) return
     fetchGroups()
+    fetchCredits()
   }, [user])
 
   const fetchGroups = async () => {
     setLoading(true)
     try {
-      // Fetch only groups the user belongs to
       const { data: memberships, error: mErr } = await supabase
         .from('group_members')
         .select('group_id')
@@ -53,7 +55,24 @@ export const useGroups = () => {
     }
   }
 
+  const fetchCredits = async () => {
+    const { data } = await supabase
+      .from('group_credits')
+      .select('slots_purchased, granted_free')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    setCredits(data ?? { slots_purchased: 0, granted_free: false })
+  }
+
+  // Derived access values
+  const isAdmin = user?.email === ADMIN_EMAIL
+  const groupsCreated = groups.filter(g => g.created_by === user?.id).length
+  const slotsTotal = credits?.slots_purchased ?? 0
+  const slotsAvailable = Math.max(0, slotsTotal - groupsCreated)
+  const canCreateGroup = isAdmin || slotsAvailable > 0
+
   const createGroup = useCallback(async ({ name, maxMembers }) => {
+    if (!isAdmin && slotsAvailable <= 0) throw new Error('Se requiere comprar slots para crear grupos.')
     if (groups.length >= MAX_GROUPS) throw new Error(`Límite alcanzado: solo puedes pertenecer a ${MAX_GROUPS} grupos.`)
 
     const invite_code = generateInviteCode()
@@ -68,7 +87,7 @@ export const useGroups = () => {
     await supabase.from('group_members').insert({ group_id: group.id, user_id: user.id })
     await fetchGroups()
     return group
-  }, [user, groups])
+  }, [user, groups, isAdmin, slotsAvailable])
 
   const joinGroup = useCallback(async (inviteCode) => {
     if (groups.length >= MAX_GROUPS) throw new Error(`Límite alcanzado: solo puedes pertenecer a ${MAX_GROUPS} grupos.`)
@@ -136,7 +155,6 @@ export const useGroups = () => {
     return data
   }
 
-  // Fetches ALL group members merged with leaderboard scores
   const fetchGroupMembers = async (groupId) => {
     const [{ data: members, error: mErr }, { data: lb }] = await Promise.all([
       supabase.from('group_members').select('user_id').eq('group_id', groupId),
@@ -163,8 +181,6 @@ export const useGroups = () => {
       .map(uid => {
         const profile = profileMap[uid] ?? {}
         const entry = lbMap[uid] ?? {}
-        // leaderboard_group runs as security definer so it always has display_name;
-        // profiles direct query needs the public-read policy (009_profiles_public_read.sql)
         const display_name = profile.display_name || entry.display_name || null
         const avatar_url   = profile.avatar_url   || entry.avatar_url   || null
         return {
@@ -188,5 +204,12 @@ export const useGroups = () => {
     if (err) throw err
   }, [])
 
-  return { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, fetchGroupMembers, removeMember, maxGroups: MAX_GROUPS }
+  return {
+    groups, loading, error,
+    credits, slotsAvailable, canCreateGroup,
+    createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup,
+    fetchGroupLeaderboard, fetchGroupMembers, removeMember,
+    fetchCredits,
+    maxGroups: MAX_GROUPS,
+  }
 }
