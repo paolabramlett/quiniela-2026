@@ -37,6 +37,6 @@ describe('PrivacyPage', () => {
   it('renders key privacy sections', () => {
     render(<MemoryRouter><PrivacyPage /></MemoryRouter>)
     expect(screen.getByText(/derechos arco/i)).toBeInTheDocument()
-    expect(screen.getByText(/google/i)).toBeInTheDocument()
+    expect(screen.getByText(/google llc/i)).toBeInTheDocument()
   })
 })

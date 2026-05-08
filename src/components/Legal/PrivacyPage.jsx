@@ -4,6 +4,7 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-bg px-4 py-12">
       <div className="max-w-2xl mx-auto">
+        {/* These pages are only reachable from /login — hardcoded back link is intentional */}
         <Link
           to="/login"
           className="inline-block text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors mb-8"
@@ -26,9 +27,9 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-white font-bold text-base mb-2">2. Datos que Recopilamos</h2>
-            <p className="mb-3"><strong className="text-white">Datos de autenticación (OAuth):</strong> nombre y apellido, dirección de correo electrónico, foto de perfil pública.</p>
-            <p className="mb-3"><strong className="text-white">Datos generados por el uso del Servicio:</strong> predicciones de partidos y resultados, membresías a grupos, historial de pagos (referencia de transacción, producto comprado, fecha).</p>
-            <p><strong className="text-white">Datos técnicos:</strong> no recopilamos direcciones IP, cookies de seguimiento ni datos de comportamiento de navegación más allá de lo estrictamente necesario para el funcionamiento del Servicio.</p>
+            <p className="mb-3"><span className="text-white font-semibold">Datos de autenticación (OAuth):</span> nombre y apellido, dirección de correo electrónico, foto de perfil pública.</p>
+            <p className="mb-3"><span className="text-white font-semibold">Datos generados por el uso del Servicio:</span> predicciones de partidos y resultados, membresías a grupos, historial de pagos (referencia de transacción, producto comprado, fecha).</p>
+            <p><span className="text-white font-semibold">Datos técnicos:</span> no recopilamos direcciones IP, cookies de seguimiento ni datos de comportamiento de navegación más allá de lo estrictamente necesario para el funcionamiento del Servicio.</p>
           </section>
 
           <section>
@@ -40,6 +41,7 @@ export default function PrivacyPage() {
             <h2 className="text-white font-bold text-base mb-2">4. Terceros con Acceso a tus Datos</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse mt-2">
+                <caption className="sr-only">Proveedores externos con acceso a datos personales</caption>
                 <thead>
                   <tr className="border-b border-line">
                     <th className="text-left py-2 pr-4 text-gray-500 font-semibold uppercase tracking-wider">Proveedor</th>

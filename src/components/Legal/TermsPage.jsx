@@ -4,6 +4,7 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-bg px-4 py-12">
       <div className="max-w-2xl mx-auto">
+        {/* These pages are only reachable from /login — hardcoded back link is intentional */}
         <Link
           to="/login"
           className="inline-block text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors mb-8"
