@@ -101,7 +101,7 @@ export const usePredictions = () => {
           { user_id: user.id, group_letter: groupLetter, team_1: teams[0], team_2: teams[1] },
           { onConflict: 'user_id,group_letter' }
         )
-      if (error) console.error('saveAdvancementPrediction upsert failed:', error)
+      if (error) setError(error.message)
     } else {
       // Partial selection — clear any previous DB record so refresh doesn't restore stale data
       await supabase
