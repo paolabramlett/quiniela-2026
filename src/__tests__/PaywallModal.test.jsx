@@ -15,8 +15,8 @@ describe('PaywallModal', () => {
 
   it('renders pack and addon pricing options', () => {
     render(<PaywallModal {...baseProps} />)
-    expect(screen.getByText(/\$299/)).toBeInTheDocument()
-    expect(screen.getByText(/\$99/)).toBeInTheDocument()
+    expect(screen.getByText('Comprar — $299 MXN')).toBeInTheDocument()
+    expect(screen.getByText('Compra el pack primero')).toBeInTheDocument()
   })
 
   it('disables addon button when slotsAvailable is 0', () => {
@@ -32,7 +32,7 @@ describe('PaywallModal', () => {
   })
 
   it('shows loading state on checkout button', () => {
-    render(<PaywallModal {...baseProps} loading={true} />)
+    render(<PaywallModal {...baseProps} loading="pack" />)
     expect(screen.getByText('...')).toBeInTheDocument()
   })
 

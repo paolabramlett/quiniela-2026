@@ -24,10 +24,10 @@ export default function PaywallModal({ onClose, onCheckout, slotsAvailable, load
           </ul>
           <button
             onClick={() => onCheckout('pack')}
-            disabled={loading}
+            disabled={loading === 'pack'}
             className="w-full py-2.5 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-40 hover:bg-red-600 transition-colors"
           >
-            {loading === 'pack' || loading === true ? '...' : 'Comprar'}
+            {loading === 'pack' ? '...' : 'Comprar — $299 MXN'}
           </button>
         </div>
 
@@ -47,10 +47,10 @@ export default function PaywallModal({ onClose, onCheckout, slotsAvailable, load
           <button
             aria-label="addon"
             onClick={() => onCheckout('addon')}
-            disabled={loading || slotsAvailable === 0}
+            disabled={loading === 'addon' || slotsAvailable === 0}
             className="w-full py-2.5 border border-line text-gray-300 rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-30 hover:border-accent hover:text-white transition-colors"
           >
-            {loading === 'addon' || (loading === true && slotsAvailable > 0) ? '...' : slotsAvailable === 0 ? 'Compra el pack primero' : 'Agregar grupo'}
+            {loading === 'addon' ? '...' : slotsAvailable === 0 ? 'Compra el pack primero' : 'Agregar grupo'}
           </button>
         </div>
 
