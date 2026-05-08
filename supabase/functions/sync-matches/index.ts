@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const API_KEY = Deno.env.get('API_FOOTBALL_KEY')!
+const API_KEY = Deno.env.get('FOOTBALL_DATA_KEY')!
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
@@ -11,71 +11,80 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-function getPhase(round: string): string | null {
-  if (round.toLowerCase().includes('group')) return 'group_stage'
-  if (round === 'Round of 16') return 'r16'
-  if (round === 'Quarter-finals') return 'qf'
-  if (round === 'Semi-finals') return 'sf'
-  if (round === 'Final') return 'final'
+function getPhase(stage: string): string | null {
+  if (stage === 'GROUP_STAGE') return 'group_stage'
+  if (stage === 'LAST_16') return 'r16'
+  if (stage === 'QUARTER_FINALS') return 'qf'
+  if (stage === 'SEMI_FINALS') return 'sf'
+  if (stage === 'FINAL') return 'final'
   return null
 }
 
-function getStatus(short: string): string {
-  if (['FT', 'AET', 'PEN'].includes(short)) return 'finished'
-  if (['1H', 'HT', '2H', 'ET', 'BT', 'P', 'SUSP', 'INT', 'LIVE'].includes(short)) return 'in_progress'
+function getStatus(status: string): string {
+  if (status === 'FINISHED') return 'finished'
+  if (['IN_PLAY', 'PAUSED', 'HALF_TIME'].includes(status)) return 'in_progress'
   return 'scheduled'
 }
 
-function getGroupResult(homeGoals: number, awayGoals: number): string {
-  if (homeGoals > awayGoals) return 'home'
-  if (homeGoals < awayGoals) return 'away'
+function getGroupLetter(group: string | null): string | null {
+  if (!group) return null
+  return group.replace('GROUP_', '').trim() || null
+}
+
+function getGroupResult(home: number, away: number): string {
+  if (home > away) return 'home'
+  if (home < away) return 'away'
   return 'draw'
 }
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const res = await fetch('https://v3.football.api-sports.io/fixtures?league=1&season=2026', {
-      headers: { 'x-apisports-key': API_KEY },
+    const res = await fetch('https://api.football-data.org/v4/competitions/WC/matches', {
+      headers: { 'X-Auth-Token': API_KEY },
     })
 
     if (!res.ok) {
-      return new Response(JSON.stringify({ error: 'API-Football request failed', status: res.status }), {
+      const text = await res.text()
+      return new Response(JSON.stringify({ error: 'football-data.org request failed', status: res.status, body: text }), {
         status: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    const { response: fixtures } = await res.json()
+    const { matches } = await res.json()
 
     let matchesUpserted = 0
+    let matchesSkipped = 0
     let resultsUpserted = 0
     const errors: string[] = []
 
-    for (const f of fixtures) {
-      const phase = getPhase(f.league.round)
+    for (const m of matches) {
+      const phase = getPhase(m.stage)
       if (!phase) continue
 
-      const group_letter = phase === 'group_stage' && f.league.group
-        ? f.league.group.replace('Group ', '').trim()
-        : null
+      // Skip matches where teams aren't decided yet (TBD knockout slots)
+      if (!m.homeTeam?.name || !m.awayTeam?.name) {
+        matchesSkipped++
+        continue
+      }
 
-      const status = getStatus(f.fixture.status.short)
+      const group_letter = getGroupLetter(m.group ?? null)
+      const status = getStatus(m.status)
 
       const { data: match, error: matchErr } = await supabase
         .from('matches')
         .upsert(
           {
-            api_fixture_id: f.fixture.id,
+            api_fixture_id: m.id,
             phase,
             group_letter,
-            home_team: f.teams.home.name,
-            away_team: f.teams.away.name,
-            kickoff_at: f.fixture.date,
+            home_team: m.homeTeam.name,
+            away_team: m.awayTeam.name,
+            kickoff_at: m.utcDate,
             status,
           },
           { onConflict: 'api_fixture_id' }
@@ -84,44 +93,37 @@ Deno.serve(async (req) => {
         .single()
 
       if (matchErr) {
-        errors.push(`match ${f.fixture.id}: ${matchErr.message}`)
+        errors.push(`match ${m.id}: ${matchErr.message}`)
         continue
       }
       matchesUpserted++
 
       if (status !== 'finished') continue
 
-      if (phase === 'group_stage') {
-        const { home, away } = f.goals
-        if (home === null || away === null) continue
-        const result = getGroupResult(home, away)
+      const homeGoals = m.score?.fullTime?.home
+      const awayGoals = m.score?.fullTime?.away
+      if (homeGoals === null || homeGoals === undefined) continue
+      if (awayGoals === null || awayGoals === undefined) continue
 
+      if (phase === 'group_stage') {
+        const result = getGroupResult(homeGoals, awayGoals)
         const { error: resultErr } = await supabase
           .from('match_results')
           .upsert({ match_id: match.id, result, winner_team: null }, { onConflict: 'match_id' })
-
         if (resultErr) errors.push(`result ${match.id}: ${resultErr.message}`)
         else resultsUpserted++
       } else {
-        const winner = f.teams.home.winner
-          ? f.teams.home.name
-          : f.teams.away.winner
-            ? f.teams.away.name
-            : null
-
-        if (!winner) continue
-
+        const winner = homeGoals > awayGoals ? m.homeTeam.name : m.awayTeam.name
         const { error: resultErr } = await supabase
           .from('match_results')
           .upsert({ match_id: match.id, result: null, winner_team: winner }, { onConflict: 'match_id' })
-
         if (resultErr) errors.push(`result ${match.id}: ${resultErr.message}`)
         else resultsUpserted++
       }
     }
 
     return new Response(
-      JSON.stringify({ success: true, matchesUpserted, resultsUpserted, errors }),
+      JSON.stringify({ success: true, matchesUpserted, matchesSkipped, resultsUpserted, errors }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
