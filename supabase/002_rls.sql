@@ -40,6 +40,7 @@ create policy "gsp_update" on public.group_stage_predictions for update using (u
 create policy "gap_select" on public.group_advancement_predictions for select using (user_id = auth.uid());
 create policy "gap_insert" on public.group_advancement_predictions for insert with check (user_id = auth.uid());
 create policy "gap_update" on public.group_advancement_predictions for update using (user_id = auth.uid());
+create policy "gap_delete" on public.group_advancement_predictions for delete using (user_id = auth.uid());
 
 -- knockout_predictions: own rows only
 create policy "kp_select" on public.knockout_predictions for select using (user_id = auth.uid());
