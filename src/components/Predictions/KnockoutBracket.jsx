@@ -14,6 +14,9 @@ const PHASE_ACCENT = {
   final: 'text-primary',
 }
 
+// Expected number of matches per phase — always show the full bracket structure
+const PHASE_SLOTS = { r16: 8, qf: 4, sf: 2, final: 1 }
+
 export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, onPredict }) {
   const byPhase = knockoutMatches.reduce((acc, m) => {
     if (!acc[m.phase]) acc[m.phase] = []
@@ -25,8 +28,11 @@ export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, 
 
   return (
     <div className="space-y-8">
-      {['r16', 'qf', 'sf', 'final'].map(phase => (
-        byPhase[phase]?.length > 0 && (
+      {['r16', 'qf', 'sf', 'final'].map(phase => {
+        const matches = byPhase[phase] ?? []
+        const placeholdersNeeded = Math.max(0, PHASE_SLOTS[phase] - matches.length)
+
+        return (
           <div key={phase}>
             {/* Phase header */}
             <div className="flex items-center gap-3 mb-3">
@@ -37,7 +43,7 @@ export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, 
             </div>
 
             <div className="space-y-2.5">
-              {byPhase[phase].map(match => (
+              {matches.map(match => (
                 known(match) ? (
                   <MatchCard
                     key={match.id}
@@ -54,17 +60,31 @@ export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, 
                     }}
                   />
                 ) : (
-                  <div key={match.id} className="bg-card border border-line rounded-xl p-4">
-                    <p className="text-xs text-gray-700 text-center uppercase tracking-widest font-bold">
-                      Por definir
-                    </p>
-                  </div>
+                  <TBDCard key={match.id} />
                 )
+              ))}
+
+              {/* Fill remaining slots with TBD placeholders */}
+              {Array.from({ length: placeholdersNeeded }, (_, i) => (
+                <TBDCard key={`placeholder-${phase}-${i}`} />
               ))}
             </div>
           </div>
         )
-      ))}
+      })}
+    </div>
+  )
+}
+
+function TBDCard() {
+  return (
+    <div className="bg-card border border-line rounded-xl p-4 flex items-center justify-between opacity-40">
+      <span className="text-xs font-bold uppercase tracking-widest text-gray-600">Por definir</span>
+      <div className="flex gap-2">
+        <div className="w-10 h-8 rounded-lg bg-surface border border-line" />
+        <div className="w-10 h-8 rounded-lg bg-surface border border-line" />
+      </div>
+      <span className="text-xs font-bold uppercase tracking-widest text-gray-600">Por definir</span>
     </div>
   )
 }
