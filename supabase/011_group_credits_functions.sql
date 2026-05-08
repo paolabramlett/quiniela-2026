@@ -15,6 +15,20 @@ begin
 end;
 $$;
 
+-- get_user_by_email: looks up a user by their auth email, returning public profile fields.
+-- Used by the admin AccessesTab to find a user before granting/revoking access.
+create or replace function public.get_user_by_email(p_email text)
+returns table(id uuid, display_name text, avatar_url text)
+language sql
+security definer
+as $$
+  select u.id, u.display_name, u.avatar_url
+  from public.users u
+  join auth.users a on a.id = u.id
+  where lower(a.email) = lower(p_email)
+  limit 1;
+$$;
+
 -- Admin write policy: allows admin_whitelist users to upsert group_credits rows
 -- (used by AccessesTab to grant/revoke free access).
 create policy "group_credits_admin_write" on public.group_credits
