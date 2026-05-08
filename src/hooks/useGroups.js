@@ -136,5 +136,42 @@ export const useGroups = () => {
     return data
   }
 
-  return { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, maxGroups: MAX_GROUPS }
+  // Fetches ALL group members merged with leaderboard scores
+  const fetchGroupMembers = async (groupId) => {
+    const [{ data: members, error: mErr }, { data: lb }] = await Promise.all([
+      supabase.from('group_members').select('user_id, profiles(id, display_name, avatar_url)').eq('group_id', groupId),
+      supabase.from('leaderboard_group').select('*').eq('group_id', groupId),
+    ])
+
+    if (mErr) throw mErr
+
+    const lbMap = {}
+    lb?.forEach(e => { lbMap[e.user_id] = e })
+
+    return (members ?? [])
+      .map(m => {
+        const profile = m.profiles ?? {}
+        const lb = lbMap[m.user_id] ?? {}
+        return {
+          user_id: m.user_id,
+          display_name: profile.display_name ?? lb.display_name ?? 'Usuario',
+          avatar_url: profile.avatar_url ?? lb.avatar_url ?? null,
+          total_points: lb.total_points ?? 0,
+          rank: lb.rank ?? null,
+        }
+      })
+      .sort((a, b) => b.total_points - a.total_points || (a.display_name ?? '').localeCompare(b.display_name ?? ''))
+  }
+
+  const removeMember = useCallback(async (groupId, userId) => {
+    const { error: err } = await supabase
+      .from('group_members')
+      .delete()
+      .eq('group_id', groupId)
+      .eq('user_id', userId)
+
+    if (err) throw err
+  }, [])
+
+  return { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, fetchGroupMembers, removeMember, maxGroups: MAX_GROUPS }
 }

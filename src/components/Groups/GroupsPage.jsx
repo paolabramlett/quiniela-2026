@@ -7,7 +7,7 @@ import GroupLeaderboard from './GroupLeaderboard'
 
 export default function GroupsPage() {
   const { user } = useAuth()
-  const { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, maxGroups } = useGroups()
+  const { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, fetchGroupMembers, removeMember, maxGroups } = useGroups()
   const [showCreate, setShowCreate] = useState(false)
   const [showJoin, setShowJoin] = useState(false)
   const [expandedGroup, setExpandedGroup] = useState(null)
@@ -128,6 +128,9 @@ export default function GroupsPage() {
                       <p className="font-semibold text-white truncate">{group.name}</p>
                       <p className="text-[10px] text-gray-600 mt-0.5 font-mono tracking-[0.2em]">
                         {group.invite_code}
+                        <span className="ml-2 font-sans not-italic normal-case tracking-normal">
+                          · {group.group_members?.[0]?.count ?? 0} participante{group.group_members?.[0]?.count !== 1 ? 's' : ''}
+                        </span>
                       </p>
                     </>
                   )}
@@ -191,7 +194,13 @@ export default function GroupsPage() {
               {/* Leaderboard */}
               {expandedGroup === group.id && !isConfirmingDelete && (
                 <div className="border-t border-line px-4 pb-4">
-                  <GroupLeaderboard groupId={group.id} fetchGroupLeaderboard={fetchGroupLeaderboard} />
+                  <GroupLeaderboard
+                    groupId={group.id}
+                    fetchGroupMembers={fetchGroupMembers}
+                    removeMember={removeMember}
+                    isCreator={isCreator}
+                    currentUserId={user?.id}
+                  />
                 </div>
               )}
             </div>
