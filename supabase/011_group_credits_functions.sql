@@ -17,25 +17,33 @@ $$;
 
 -- get_user_by_email: looks up a user by their auth email, returning public profile fields.
 -- Used by the admin AccessesTab to find a user before granting/revoking access.
+-- Restricted to admin_whitelist members to prevent PII enumeration by regular users.
 create or replace function public.get_user_by_email(p_email text)
 returns table(id uuid, display_name text, avatar_url text)
-language sql
+language plpgsql
 security definer
 set search_path = public, auth
 as $$
-  select u.id, u.display_name, u.avatar_url
-  from public.users u
-  join auth.users a on a.id = u.id
-  where lower(a.email) = lower(p_email)
-  limit 1;
+begin
+  -- Only admins may look up users by email
+  if not public.is_admin() then
+    raise exception 'Unauthorized';
+  end if;
+
+  return query
+    select u.id, u.display_name, u.avatar_url
+    from public.users u
+    join auth.users a on a.id = u.id
+    where lower(a.email) = lower(p_email)
+    limit 1;
+end;
 $$;
 
 -- Admin write policy: allows admin_whitelist users to upsert group_credits rows
 -- (used by AccessesTab to grant/revoke free access).
+-- Note: admin_whitelist has RLS enabled with no insert policy — only service role
+-- can add emails to that table, so this chain is safe against self-promotion.
 create policy "group_credits_admin_write" on public.group_credits
-  for all using (
-    exists (
-      select 1 from public.admin_whitelist
-      where email = (select email from auth.users where id = auth.uid())
-    )
-  );
+  for all
+  using (public.is_admin())
+  with check (public.is_admin());

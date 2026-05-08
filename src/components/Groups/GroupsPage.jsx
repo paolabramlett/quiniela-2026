@@ -40,8 +40,7 @@ export default function GroupsPage() {
   // Handle ?payment=success|cancelled on mount
   useEffect(() => {
     if (paymentParam === 'success') {
-      fetchCredits() // refresh credits from DB
-      setShowSuccess(true)
+      fetchCredits().then(() => setShowSuccess(true)) // show success only after credits refreshed
       setSearchParams({}, { replace: true })
     } else if (paymentParam === 'cancelled') {
       setCancelledMsg(true)

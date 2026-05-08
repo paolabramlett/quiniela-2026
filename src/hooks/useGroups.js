@@ -63,10 +63,14 @@ export const useGroups = () => {
         .eq('user_id', user.id)
         .maybeSingle()
       if (err) throw err
-      setCredits(data ?? { slots_purchased: 0, granted_free: false })
+      const resolved = data ?? { slots_purchased: 0, granted_free: false }
+      setCredits(resolved)
+      return resolved
     } catch (err) {
       setError(err.message)
-      setCredits({ slots_purchased: 0, granted_free: false })
+      const fallback = { slots_purchased: 0, granted_free: false }
+      setCredits(fallback)
+      return fallback
     }
   }
 

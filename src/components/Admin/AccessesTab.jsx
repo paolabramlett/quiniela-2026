@@ -152,7 +152,7 @@ export default function AccessesTab() {
               disabled={saving || (!result.credits.granted_free && result.credits.slots_purchased === 0)}
               className="flex-1 py-2.5 border border-danger/40 text-danger rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-30 hover:bg-danger/10 transition-colors"
             >
-              {saving ? '...' : 'Revocar acceso'}
+              {saving ? '...' : 'Revocar todo el acceso'}
             </button>
           </div>
         </div>
