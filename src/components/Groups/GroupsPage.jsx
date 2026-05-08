@@ -1,21 +1,79 @@
-import { useState } from 'react'
+// src/components/Groups/GroupsPage.jsx
+import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { supabase } from '../../utils/supabase'
 import { useAuth } from '../../hooks/useAuth'
 import { useGroups } from '../../hooks/useGroups'
 import CreateGroupModal from './CreateGroupModal'
 import JoinGroupModal from './JoinGroupModal'
 import GroupLeaderboard from './GroupLeaderboard'
+import PaywallModal from './PaywallModal'
+import PaymentSuccessScreen from './PaymentSuccessScreen'
 
 export default function GroupsPage() {
   const { user } = useAuth()
-  const { groups, loading, error, createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup, fetchGroupLeaderboard, fetchGroupMembers, removeMember, maxGroups } = useGroups()
+  const {
+    groups, loading, error,
+    credits, slotsAvailable, canCreateGroup,
+    createGroup, joinGroup, updateGroup, deleteGroup, leaveGroup,
+    fetchGroupLeaderboard, fetchGroupMembers, removeMember, fetchCredits,
+    maxGroups,
+  } = useGroups()
+
+  const [searchParams, setSearchParams] = useSearchParams()
+  const paymentParam = searchParams.get('payment')
+
   const [showCreate, setShowCreate] = useState(false)
   const [showJoin, setShowJoin] = useState(false)
+  const [showPaywall, setShowPaywall] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState(false) // false | 'pack' | 'addon'
+  const [checkoutError, setCheckoutError] = useState(null)
   const [expandedGroup, setExpandedGroup] = useState(null)
   const [copiedCode, setCopiedCode] = useState(null)
   const [editingGroup, setEditingGroup] = useState(null)
   const [editName, setEditName] = useState('')
   const [savingEdit, setSavingEdit] = useState(false)
   const [deletingGroup, setDeletingGroup] = useState(null)
+  const [cancelledMsg, setCancelledMsg] = useState(false)
+
+  // Handle ?payment=success|cancelled on mount
+  useEffect(() => {
+    if (paymentParam === 'success') {
+      fetchCredits() // refresh credits from DB
+      setShowSuccess(true)
+      setSearchParams({}, { replace: true })
+    } else if (paymentParam === 'cancelled') {
+      setCancelledMsg(true)
+      setShowPaywall(true)
+      setSearchParams({}, { replace: true })
+    }
+  }, [paymentParam])
+
+  const handleCreateClick = () => {
+    if (canCreateGroup) {
+      setShowCreate(true)
+    } else {
+      setCancelledMsg(false)
+      setCheckoutError(null)
+      setShowPaywall(true)
+    }
+  }
+
+  const handleCheckout = useCallback(async (product) => {
+    setCheckoutLoading(product)
+    setCheckoutError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { product },
+      })
+      if (error) throw error
+      window.location.href = data.url
+    } catch (err) {
+      setCheckoutError('No pudimos conectar con el sistema de pagos. Intenta de nuevo.')
+      setCheckoutLoading(false)
+    }
+  }, [])
 
   const atLimit = groups.length >= maxGroups
 
@@ -63,11 +121,31 @@ export default function GroupsPage() {
 
   return (
     <div>
+      {/* Success screen overlay */}
+      {showSuccess && (
+        <PaymentSuccessScreen
+          slotsAvailable={slotsAvailable}
+          onDismiss={() => { setShowSuccess(false); setShowCreate(true) }}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-6 animate-fade-up">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-0.5">Gestiona</p>
         <h1 className="font-display text-4xl tracking-wider text-white">MIS GRUPOS</h1>
       </div>
+
+      {/* Slots indicator for paying users */}
+      {!canCreateGroup && credits !== null && (
+        <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3 mb-5 text-sm text-gold font-semibold">
+          Necesitas comprar slots para crear grupos.
+        </div>
+      )}
+      {canCreateGroup && credits?.slots_purchased > 0 && (
+        <div className="bg-accent/10 border border-accent/30 rounded-xl px-4 py-3 mb-5 text-sm text-accent font-semibold">
+          {slotsAvailable} slot{slotsAvailable !== 1 ? 's' : ''} disponible{slotsAvailable !== 1 ? 's' : ''} para crear grupos.
+        </div>
+      )}
 
       {/* Limit warning */}
       {atLimit && (
@@ -79,11 +157,11 @@ export default function GroupsPage() {
       {/* Action buttons */}
       <div className="flex gap-2 mb-6">
         <button
-          onClick={() => setShowCreate(true)}
+          onClick={handleCreateClick}
           disabled={atLimit}
           className="flex-1 py-3 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-widest disabled:opacity-30 hover:bg-red-600 transition-colors"
         >
-          + Crear Grupo
+          {canCreateGroup ? '+ Crear Grupo' : '🔒 Crear Grupo'}
         </button>
         <button
           onClick={() => setShowJoin(true)}
@@ -103,7 +181,6 @@ export default function GroupsPage() {
 
           return (
             <div key={group.id} className="bg-card border border-line rounded-xl overflow-hidden">
-              {/* Group row */}
               <div
                 className="flex items-center justify-between px-4 py-4 cursor-pointer hover:bg-surface transition-colors"
                 onClick={() => !isEditing && setExpandedGroup(expandedGroup === group.id ? null : group.id)}
@@ -165,7 +242,6 @@ export default function GroupsPage() {
                 )}
               </div>
 
-              {/* Delete confirm */}
               {isConfirmingDelete && (
                 <div
                   className="border-t border-line px-4 py-3 bg-danger/5 flex items-center justify-between gap-3"
@@ -191,7 +267,6 @@ export default function GroupsPage() {
                 </div>
               )}
 
-              {/* Leaderboard */}
               {expandedGroup === group.id && !isConfirmingDelete && (
                 <div className="border-t border-line px-4 pb-4">
                   <GroupLeaderboard
@@ -216,6 +291,16 @@ export default function GroupsPage() {
           </div>
         )}
       </div>
+
+      {showPaywall && (
+        <PaywallModal
+          onClose={() => { setShowPaywall(false); setCancelledMsg(false) }}
+          onCheckout={handleCheckout}
+          slotsAvailable={slotsAvailable}
+          loading={checkoutLoading}
+          error={cancelledMsg ? 'El pago fue cancelado. Intenta de nuevo cuando quieras.' : checkoutError}
+        />
+      )}
 
       {showCreate && (
         <CreateGroupModal
