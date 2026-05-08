@@ -148,8 +148,8 @@ export const useGroups = () => {
     const userIds = (members ?? []).map(m => m.user_id)
     if (userIds.length === 0) return []
 
-    const { data: profiles } = await supabase
-      .from('profiles')
+    const { data: users } = await supabase
+      .from('users')
       .select('id, display_name, avatar_url')
       .in('id', userIds)
 
@@ -157,7 +157,7 @@ export const useGroups = () => {
     lb?.forEach(e => { lbMap[e.user_id] = e })
 
     const profileMap = {}
-    profiles?.forEach(p => { profileMap[p.id] = p })
+    users?.forEach(p => { profileMap[p.id] = p })
 
     return userIds
       .map(uid => {
