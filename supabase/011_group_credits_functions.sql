@@ -21,6 +21,7 @@ create or replace function public.get_user_by_email(p_email text)
 returns table(id uuid, display_name text, avatar_url text)
 language sql
 security definer
+set search_path = public, auth
 as $$
   select u.id, u.display_name, u.avatar_url
   from public.users u

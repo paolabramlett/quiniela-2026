@@ -27,11 +27,16 @@ export default function AccessesTab() {
 
       const user = userData[0]
 
-      const { data: credits } = await supabase
+      const { data: credits, error: creditsErr } = await supabase
         .from('group_credits')
         .select('slots_purchased, granted_free')
         .eq('user_id', user.id)
         .maybeSingle()
+
+      if (creditsErr) {
+        setMessage({ ok: false, text: 'Error cargando créditos del usuario.' })
+        return
+      }
 
       setResult({
         user,
@@ -54,7 +59,6 @@ export default function AccessesTab() {
           user_id: result.user.id,
           slots_purchased: newSlots,
           granted_free: true,
-          updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' })
 
       if (error) throw error
@@ -74,11 +78,12 @@ export default function AccessesTab() {
     try {
       const { error } = await supabase
         .from('group_credits')
+        // Revoke zeroes out all slots (both paid and free) per spec:
+        // "Revoke access: sets granted_free = false, slots_purchased = 0"
         .upsert({
           user_id: result.user.id,
           slots_purchased: 0,
           granted_free: false,
-          updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' })
 
       if (error) throw error
