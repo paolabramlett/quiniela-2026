@@ -35,6 +35,7 @@ create policy "matches_admin_write" on public.matches for all using (public.is_a
 create policy "gsp_select" on public.group_stage_predictions for select using (user_id = auth.uid());
 create policy "gsp_insert" on public.group_stage_predictions for insert with check (user_id = auth.uid());
 create policy "gsp_update" on public.group_stage_predictions for update using (user_id = auth.uid());
+create policy "gsp_delete" on public.group_stage_predictions for delete using (user_id = auth.uid());
 
 -- group_advancement_predictions: own rows only
 create policy "gap_select" on public.group_advancement_predictions for select using (user_id = auth.uid());
@@ -46,6 +47,7 @@ create policy "gap_delete" on public.group_advancement_predictions for delete us
 create policy "kp_select" on public.knockout_predictions for select using (user_id = auth.uid());
 create policy "kp_insert" on public.knockout_predictions for insert with check (user_id = auth.uid());
 create policy "kp_update" on public.knockout_predictions for update using (user_id = auth.uid());
+create policy "kp_delete" on public.knockout_predictions for delete using (user_id = auth.uid());
 
 -- match_results: public read, admin write
 create policy "mr_select" on public.match_results for select using (true);
