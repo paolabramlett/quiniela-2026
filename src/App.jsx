@@ -8,6 +8,8 @@ import PredictionsPage from './components/Predictions/PredictionsPage'
 import LeaderboardPage from './components/Leaderboard/LeaderboardPage'
 import GroupsPage from './components/Groups/GroupsPage'
 import AdminPage from './components/Admin/AdminPage'
+import TermsPage from './components/Legal/TermsPage'
+import PrivacyPage from './components/Legal/PrivacyPage'
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/terminos" element={<TermsPage />} />
+          <Route path="/privacidad" element={<PrivacyPage />} />
           <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="predictions" element={<PredictionsPage />} />

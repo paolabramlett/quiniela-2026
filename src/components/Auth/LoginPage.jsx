@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
 
 export default function LoginPage() {
@@ -56,6 +57,17 @@ export default function LoginPage() {
             </svg>
             Continuar con Google
           </button>
+          {/* Legal consent footer */}
+          <p className="mt-6 text-[11px] text-gray-600 leading-relaxed max-w-xs mx-auto">
+            Al continuar, aceptas nuestros{' '}
+            <Link to="/terminos" className="text-gray-500 hover:text-white underline underline-offset-2 transition-colors">
+              Términos y Condiciones
+            </Link>
+            {' '}y{' '}
+            <Link to="/privacidad" className="text-gray-500 hover:text-white underline underline-offset-2 transition-colors">
+              Política de Privacidad
+            </Link>
+          </p>
         </div>
       </div>
     </div>
