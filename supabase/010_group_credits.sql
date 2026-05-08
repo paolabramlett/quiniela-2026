@@ -9,7 +9,7 @@
 
 create table public.group_credits (
   user_id uuid primary key references public.users(id) on delete cascade,
-  slots_purchased int not null default 0,
+  slots_purchased int not null default 0 check (slots_purchased >= 0),
   granted_free boolean not null default false,
   updated_at timestamptz default now()
 );
