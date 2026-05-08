@@ -56,12 +56,18 @@ export const useGroups = () => {
   }
 
   const fetchCredits = async () => {
-    const { data } = await supabase
-      .from('group_credits')
-      .select('slots_purchased, granted_free')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    setCredits(data ?? { slots_purchased: 0, granted_free: false })
+    try {
+      const { data, error: err } = await supabase
+        .from('group_credits')
+        .select('slots_purchased, granted_free')
+        .eq('user_id', user.id)
+        .maybeSingle()
+      if (err) throw err
+      setCredits(data ?? { slots_purchased: 0, granted_free: false })
+    } catch (err) {
+      setError(err.message)
+      setCredits({ slots_purchased: 0, granted_free: false })
+    }
   }
 
   // Derived access values
