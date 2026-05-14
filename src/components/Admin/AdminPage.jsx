@@ -4,6 +4,7 @@ import { useAdmin } from '../../hooks/useAdmin'
 import MatchResultForm from './MatchResultForm'
 import AdvancementResultForm from './AdvancementResultForm'
 import AccessesTab from './AccessesTab'
+import UsersTab from './UsersTab'
 
 const PHASE_LABELS = { group_stage: 'Fase de Grupos', r16: 'Octavos de Final', qf: 'Cuartos de Final', sf: 'Semifinales', final: 'Final' }
 const ADMIN_PASSWORD = 'quiniela2026admin'
@@ -106,6 +107,12 @@ export default function AdminPage() {
         >
           Accesos
         </button>
+        <button
+          onClick={() => setActiveTab('usuarios')}
+          className={`flex-1 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'usuarios' ? 'bg-primary text-white' : 'text-gray-500 hover:text-gray-300'}`}
+        >
+          Usuarios
+        </button>
       </div>
 
       {activeTab === 'resultados' && (
@@ -166,6 +173,7 @@ export default function AdminPage() {
       )}
 
       {activeTab === 'accesos' && <AccessesTab />}
+      {activeTab === 'usuarios' && <UsersTab />}
     </div>
   )
 }
