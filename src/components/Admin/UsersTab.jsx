@@ -15,7 +15,7 @@ function Avatar({ name, avatarUrl }) {
     return <img src={avatarUrl} alt={name} className="w-8 h-8 rounded-full object-cover" />
   }
   const initials = name
-    ? name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
+    ? name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : '?'
   return (
     <div className="w-8 h-8 rounded-full bg-surface border border-line flex items-center justify-center text-[10px] font-bold text-gray-400">

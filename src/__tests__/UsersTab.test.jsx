@@ -55,14 +55,17 @@ describe('UsersTab', () => {
   it('shows paying users count', async () => {
     render(<UsersTab />)
     await waitFor(() => expect(screen.getByText(/usuarios pagadores/i)).toBeInTheDocument())
-    // 1 user has slots_purchased > 0
+    // 1 user has slots_purchased > 0 — stat cards render in order: total, paying, free
     const cards = screen.getAllByRole('heading', { level: 2 })
-    expect(cards.some(el => el.textContent === '1')).toBe(true)
+    expect(cards[1].textContent).toBe('1')
   })
 
   it('shows free access count', async () => {
     render(<UsersTab />)
     await waitFor(() => expect(screen.getByText(/accesos gratuitos/i)).toBeInTheDocument())
+    // 1 user has granted_free = true
+    const cards = screen.getAllByRole('heading', { level: 2 })
+    expect(cards[2].textContent).toBe('1')
   })
 
   it('renders a row for each user', async () => {
