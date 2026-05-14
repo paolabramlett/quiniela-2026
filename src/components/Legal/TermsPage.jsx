@@ -42,7 +42,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-white font-bold text-base mb-2">5. Pagos</h2>
-            <p>Ciertas funciones del Servicio, como la creación de grupos, requieren un pago único en pesos mexicanos (MXN) procesado por Stripe. <strong className="text-white">Todos los pagos son definitivos y no reembolsables</strong>, salvo lo dispuesto por la legislación mexicana aplicable. No se realizan cargos recurrentes ni suscripciones automáticas.</p>
+            <p>Ciertas funciones del Servicio, como la creación de grupos, requieren un pago único en pesos mexicanos (MXN) procesado por Stripe. El acceso a dichas funciones se activa de forma inmediata al completarse el pago. Al tratarse de contenido digital de acceso inmediato, <strong className="text-white">los pagos son definitivos y no reembolsables</strong>, conforme al artículo 76 Bis de la Ley Federal de Protección al Consumidor. No se realizan cargos recurrentes ni suscripciones automáticas.</p>
           </section>
 
           <section>

@@ -58,6 +58,10 @@ export default function PaywallModal({ onClose, onCheckout, slotsAvailable, load
           <p className="text-danger text-xs font-semibold mb-3">{error}</p>
         )}
 
+        <p className="text-[11px] text-gray-600 leading-relaxed text-center mb-4">
+          Al continuar, entiendes que <strong className="text-gray-400">el pago es definitivo y no reembolsable</strong>. El acceso se activa de inmediato al completar la compra.
+        </p>
+
         <button
           onClick={onClose}
           className="w-full text-xs text-gray-600 hover:text-white transition-colors uppercase tracking-widest font-bold"
