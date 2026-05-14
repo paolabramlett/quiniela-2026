@@ -1,4 +1,7 @@
 -- supabase/013_users_report_function.sql
+-- Admin-only function returning one row per registered user with their
+-- profile, email, signup date, and group credit status (paid or free).
+-- Accessible only to admin accounts via is_admin() guard.
 create or replace function public.get_users_report()
 returns table(
   id uuid,
