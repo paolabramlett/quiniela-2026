@@ -52,7 +52,8 @@ export default function AccessesTab() {
     setSaving(true)
     setMessage(null)
     try {
-      const newSlots = Math.max(result.credits.slots_purchased, 3)
+      // Free grant gives exactly 1 slot. If they already have paid slots, keep the higher count.
+      const newSlots = Math.max(result.credits.slots_purchased, 1)
       const { error } = await supabase
         .from('group_credits')
         .upsert({
