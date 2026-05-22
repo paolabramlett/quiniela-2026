@@ -25,17 +25,18 @@ function Avatar({ name, avatarUrl }) {
 }
 
 function Badge({ slots_purchased, granted_free }) {
-  if (slots_purchased > 0) {
-    return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-accent/10 text-accent">
-        Pagador
-      </span>
-    )
-  }
+  // Check granted_free first — free users also have slots_purchased > 0
   if (granted_free) {
     return (
       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary">
         Gratuito
+      </span>
+    )
+  }
+  if (slots_purchased > 0) {
+    return (
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-accent/10 text-accent">
+        Pagador
       </span>
     )
   }
@@ -78,7 +79,7 @@ export default function UsersTab() {
   }
 
   const totalUsers = users.length
-  const payingUsers = users.filter(u => u.slots_purchased > 0).length
+  const payingUsers = users.filter(u => u.slots_purchased > 0 && !u.granted_free).length
   const freeUsers = users.filter(u => u.granted_free).length
 
   return (
