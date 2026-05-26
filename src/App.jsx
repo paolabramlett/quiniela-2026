@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard/Dashboard'
 import PredictionsPage from './components/Predictions/PredictionsPage'
 import LeaderboardPage from './components/Leaderboard/LeaderboardPage'
 import GroupsPage from './components/Groups/GroupsPage'
+import FeedPage from './components/Feed/FeedPage'
 import AdminPage from './components/Admin/AdminPage'
 import TermsPage from './components/Legal/TermsPage'
 import PrivacyPage from './components/Legal/PrivacyPage'
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="predictions" element={<PredictionsPage />} />
             <Route path="leaderboard" element={<LeaderboardPage />} />
             <Route path="groups" element={<GroupsPage />} />
+            <Route path="feed" element={<FeedPage />} />
             <Route path="admin" element={<AdminPage />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
