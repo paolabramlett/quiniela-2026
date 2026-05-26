@@ -28,7 +28,7 @@ export const useGroupActivity = (groupId) => {
       setLoading(false)
     }
 
-    fetch()
+    fetch().catch(console.error)
     return () => { cancelled = true }
   }, [groupId])
 
