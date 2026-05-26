@@ -52,4 +52,22 @@ describe('ActivityEvent', () => {
     render(<ActivityEvent event={{ ...base, actor_avatar_url: 'https://example.com/avatar.jpg' }} />)
     expect(screen.getByAltText('')).toBeInTheDocument()
   })
+
+  it('shows group name when showGroupName={true} and event.group_name is set', () => {
+    const eventWithGroup = { ...base, group_name: 'Los Amigos' }
+    render(<ActivityEvent event={eventWithGroup} showGroupName={true} />)
+    expect(screen.getByText('Los Amigos')).toBeInTheDocument()
+  })
+
+  it('does not show group name when showGroupName is not passed (default false)', () => {
+    const eventWithGroup = { ...base, group_name: 'Los Amigos' }
+    render(<ActivityEvent event={eventWithGroup} />)
+    expect(screen.queryByText('Los Amigos')).not.toBeInTheDocument()
+  })
+
+  it('renders "ayer" for events 25 hours ago', () => {
+    const eventAyer = { ...base, created_at: new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString() }
+    render(<ActivityEvent event={eventAyer} />)
+    expect(screen.getByText('ayer')).toBeInTheDocument()
+  })
 })
