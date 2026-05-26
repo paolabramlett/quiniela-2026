@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import ShareButton from '../Sharing/ShareButton'
 
 function InitialsAvatar({ name, size = 'md' }) {
   const initials = name
@@ -22,7 +23,7 @@ function InitialsAvatar({ name, size = 'md' }) {
   )
 }
 
-export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMember, isCreator, currentUserId }) {
+export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMember, isCreator, currentUserId, groupName, inviteCode }) {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [removingId, setRemovingId] = useState(null)
@@ -106,6 +107,17 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
                   {member.total_points}
                   <span className="text-[10px] text-gray-600 ml-0.5 font-sans font-bold">pts</span>
                 </span>
+
+                {/* Share button — only for current user */}
+                {isMe && (
+                  <ShareButton
+                    displayName={member.display_name}
+                    rank={idx + 1}
+                    points={member.total_points}
+                    groupName={groupName}
+                    inviteCode={inviteCode}
+                  />
+                )}
 
                 {/* Remove button — only for creator, not self */}
                 {canRemove && !isConfirming && (

@@ -274,6 +274,8 @@ export default function GroupsPage() {
                     removeMember={removeMember}
                     isCreator={isCreator}
                     currentUserId={user?.id}
+                    groupName={group.name}
+                    inviteCode={group.invite_code}
                   />
                 </div>
               )}
