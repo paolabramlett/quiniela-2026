@@ -1,3 +1,5 @@
+import { getFlag } from '../../utils/teamFlags'
+
 export default function AdvancementPicker({ teams, selection, onSelect, locked }) {
   const toggle = (team) => {
     if (locked) return
@@ -31,7 +33,7 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
                 ${maxed ? 'opacity-30' : ''}
                 disabled:cursor-not-allowed`}
             >
-              {team}
+              <span aria-hidden="true">{getFlag(team)}</span> {team}
             </button>
           )
         })}

@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth'
 import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { usePredictions } from '../../hooks/usePredictions'
 import { getCountdownLabel, isMatchLocked } from '../../utils/scoring'
+import { getFlag } from '../../utils/teamFlags'
 
 const quickActions = [
   { label: 'Hacer Picks', sub: 'Elige tus favoritos', to: '/predictions', color: 'bg-primary', icon: '🎯' },
@@ -62,7 +63,7 @@ export default function Dashboard() {
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-600 mb-1">Próximo Cierre</p>
             <p className="text-sm font-semibold text-white">
-              {nextMatch.home_team} <span className="text-gray-600">vs</span> {nextMatch.away_team}
+              <span aria-hidden="true">{getFlag(nextMatch.home_team)}</span> {nextMatch.home_team} <span className="text-gray-600">vs</span> {nextMatch.away_team} <span aria-hidden="true">{getFlag(nextMatch.away_team)}</span>
             </p>
           </div>
           <span className="font-display text-2xl text-primary tracking-wider">{countdown}</span>

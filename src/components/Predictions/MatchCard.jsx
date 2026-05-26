@@ -1,4 +1,5 @@
 import { isMatchLocked, getCountdownLabel } from '../../utils/scoring'
+import { getFlag } from '../../utils/teamFlags'
 
 // Per-choice colors — home=red, draw=gold, away=teal (WC2026 palette)
 const CHOICE_SELECTED = {
@@ -24,7 +25,9 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
       {/* Match row */}
       <div className="flex items-center gap-2 px-4 py-3">
         {/* Home team */}
-        <span className="flex-1 text-sm font-semibold text-white truncate">{match.home_team}</span>
+        <span className="flex-1 text-sm font-semibold text-white truncate">
+          <span className="mr-1.5" aria-hidden="true">{getFlag(match.home_team)}</span>{match.home_team}
+        </span>
 
         {/* Pick buttons */}
         <div className="flex gap-1.5 flex-shrink-0">
@@ -50,7 +53,9 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
         </div>
 
         {/* Away team */}
-        <span className="flex-1 text-sm font-semibold text-white truncate text-right">{match.away_team}</span>
+        <span className="flex-1 text-sm font-semibold text-white truncate text-right">
+          {match.away_team}<span className="ml-1.5" aria-hidden="true">{getFlag(match.away_team)}</span>
+        </span>
       </div>
 
       {/* Countdown / lock bar */}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { getFlag } from '../../utils/teamFlags'
 
 export default function MatchResultForm({ match, existingResult, onSave }) {
   const isGroupStage = match.phase === 'group_stage'
@@ -27,7 +28,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
     <div className="bg-white rounded-xl shadow-sm p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm font-semibold text-gray-700">
-          {match.home_team} vs {match.away_team}
+          {getFlag(match.home_team)} {match.home_team} vs {match.away_team} {getFlag(match.away_team)}
         </p>
         {existingResult && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">✓ Guardado</span>}
       </div>
@@ -41,7 +42,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors
                 ${result === opt ? 'bg-primary text-white border-primary' : 'bg-bg text-gray-600 border-gray-200'}`}
             >
-              {opt === 'home' ? match.home_team : opt === 'away' ? match.away_team : 'Empate'}
+              {opt === 'home' ? `${getFlag(match.home_team)} ${match.home_team}` : opt === 'away' ? `${getFlag(match.away_team)} ${match.away_team}` : 'Empate'}
             </button>
           ))}
         </div>
@@ -54,7 +55,7 @@ export default function MatchResultForm({ match, existingResult, onSave }) {
               className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-colors
                 ${winner === team ? 'bg-primary text-white border-primary' : 'bg-bg text-gray-600 border-gray-200'}`}
             >
-              {team}
+              {getFlag(team)} {team}
             </button>
           ))}
         </div>
