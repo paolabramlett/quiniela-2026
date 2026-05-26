@@ -1,5 +1,6 @@
 import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { useAuth } from '../../hooks/useAuth'
+import ShareButton from '../Sharing/ShareButton'
 
 const RANK_STYLE = {
   1: { label: '1', color: 'text-gold',  bg: 'bg-gold/10  border-gold/30' },
@@ -7,7 +8,7 @@ const RANK_STYLE = {
   3: { label: '3', color: 'text-[#CD7F32]', bg: 'bg-[#CD7F32]/10 border-[#CD7F32]/30' },
 }
 
-function LeaderboardRow({ entry, isCurrentUser }) {
+function LeaderboardRow({ entry, isCurrentUser, shareButton }) {
   const special = RANK_STYLE[entry.rank]
   return (
     <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors
@@ -45,6 +46,9 @@ function LeaderboardRow({ entry, isCurrentUser }) {
         </span>
         <span className="text-[10px] text-gray-600 ml-1">pts</span>
       </div>
+
+      {/* Share button — only passed for current user */}
+      {shareButton}
     </div>
   )
 }
@@ -81,7 +85,19 @@ export default function LeaderboardPage() {
         <>
           <div className="space-y-2">
             {entries.map(entry => (
-              <LeaderboardRow key={entry.user_id} entry={entry} isCurrentUser={entry.user_id === user?.id} />
+              <LeaderboardRow
+                key={entry.user_id}
+                entry={entry}
+                isCurrentUser={entry.user_id === user?.id}
+                shareButton={entry.user_id === user?.id ? (
+                  <ShareButton
+                    displayName={entry.display_name}
+                    rank={entry.rank}
+                    points={entry.total_points}
+                    correctPredictions={entry.correct_predictions}
+                  />
+                ) : null}
+              />
             ))}
           </div>
 
@@ -89,7 +105,18 @@ export default function LeaderboardPage() {
           {!isInTop100 && userEntry && (
             <div className="mt-4 pt-4 border-t border-line">
               <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">Tu posición</p>
-              <LeaderboardRow entry={userEntry} isCurrentUser />
+              <LeaderboardRow
+                entry={userEntry}
+                isCurrentUser
+                shareButton={
+                  <ShareButton
+                    displayName={userEntry.display_name}
+                    rank={userEntry.rank}
+                    points={userEntry.total_points}
+                    correctPredictions={userEntry.correct_predictions}
+                  />
+                }
+              />
             </div>
           )}
         </>
