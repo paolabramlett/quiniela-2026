@@ -20,6 +20,7 @@ export const useShareCard = (cardRef, { displayName, rank, points, groupName, in
     if (!cardRef.current || sharing) return
     setSharing(true)
     try {
+      await document.fonts.ready
       const canvas = await html2canvas(cardRef.current, { useCORS: true, scale: 2 })
       const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
       const file = new File([blob], 'quiniela-26.png', { type: 'image/png' })
