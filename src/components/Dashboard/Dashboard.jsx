@@ -4,6 +4,8 @@ import { useLeaderboard } from '../../hooks/useLeaderboard'
 import { usePredictions } from '../../hooks/usePredictions'
 import { getCountdownLabel, isMatchLocked } from '../../utils/scoring'
 import { getFlag } from '../../utils/teamFlags'
+import { useRecentResults } from '../../hooks/useRecentResults'
+import RecentResults from './RecentResults'
 
 const quickActions = [
   { label: 'Hacer Picks', sub: 'Elige tus favoritos', to: '/predictions', color: 'bg-primary', icon: '🎯' },
@@ -15,6 +17,7 @@ export default function Dashboard() {
   const { profile } = useAuth()
   const { userEntry } = useLeaderboard()
   const { matches } = usePredictions()
+  const { results: recentResults, loading: recentLoading } = useRecentResults()
   const navigate = useNavigate()
 
   const nextMatch = matches
@@ -70,8 +73,13 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Recent results */}
+      <div className="animate-fade-up stagger-4">
+        <RecentResults results={recentResults} loading={recentLoading} />
+      </div>
+
       {/* Quick actions */}
-      <div className="animate-fade-up stagger-4 grid grid-cols-3 gap-3">
+      <div className="animate-fade-up stagger-5 grid grid-cols-3 gap-3">
         {quickActions.map(({ label, sub, to, color, icon }) => (
           <button
             key={to}
