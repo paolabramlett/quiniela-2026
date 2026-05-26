@@ -16,7 +16,7 @@ Share button appears in three places:
 
 Fixed dimensions: **400 × 600 px**, vertical format (Instagram Stories / WhatsApp friendly).
 
-**Visual style:** Dark background (`#0d0d0d`), 2px red (`#E8351E`) border, white text. Matches app theme. Playful/trash-talk tone.
+**Visual style:** Colorful gradient background (`linear-gradient(135deg, #2563EB, #7C3AED, #E8351E, #F59E0B)`) with decorative geometric blobs (colored circles and a rotated square at the corners). White card (`border-radius: 14px`, drop shadow) floats in the center. Bold black text inside the card. **QUINIELA 26** wordmark (black pill, white "QUINIELA", red "26") anchors the bottom of the card. Matches the brand's social media aesthetic.
 
 ### Score-only variant (Dashboard + global Leaderboard)
 
