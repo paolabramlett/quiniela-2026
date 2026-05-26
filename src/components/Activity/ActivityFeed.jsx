@@ -10,7 +10,7 @@ export default function ActivityFeed({ events, loading, showGroupName = false })
     )
   }
 
-  if (events.length === 0) {
+  if (!events || events.length === 0) {
     return (
       <div className="py-6 text-center">
         <p className="text-gray-600 text-xs font-bold uppercase tracking-widest">Sin actividad reciente</p>
