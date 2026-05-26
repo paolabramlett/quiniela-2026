@@ -6,6 +6,7 @@ import { getCountdownLabel, isMatchLocked } from '../../utils/scoring'
 import { getFlag } from '../../utils/teamFlags'
 import { useRecentResults } from '../../hooks/useRecentResults'
 import RecentResults from './RecentResults'
+import ShareButton from '../Sharing/ShareButton'
 
 const quickActions = [
   { label: 'Hacer Picks', sub: 'Elige tus favoritos', to: '/predictions', color: 'bg-primary', icon: '🎯' },
@@ -58,6 +59,16 @@ export default function Dashboard() {
             <p className="text-xs text-gray-600 mt-2">ranking global</p>
           </div>
         </div>
+        {userEntry && (
+          <div className="px-5 pb-4">
+            <ShareButton
+              displayName={profile?.display_name}
+              rank={userEntry.rank}
+              points={userEntry.total_points}
+              correctPredictions={userEntry.correct_predictions}
+            />
+          </div>
+        )}
       </div>
 
       {/* Next match countdown */}

@@ -4,6 +4,8 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
+vi.mock('html2canvas', () => ({ default: vi.fn() }))
+
 vi.mock('../hooks/useAuth', () => ({
   useAuth: () => ({ user: { id: 'user-1' }, profile: { display_name: 'Paola' } }),
 }))
@@ -44,5 +46,10 @@ describe('Dashboard', () => {
   it('renders the score from recent results', () => {
     render(<MemoryRouter><Dashboard /></MemoryRouter>)
     expect(screen.getByText('2 — 0')).toBeInTheDocument()
+  })
+
+  it('renders the ShareButton when userEntry is present', () => {
+    render(<MemoryRouter><Dashboard /></MemoryRouter>)
+    expect(screen.getByRole('button', { name: /compartir/i })).toBeInTheDocument()
   })
 })
