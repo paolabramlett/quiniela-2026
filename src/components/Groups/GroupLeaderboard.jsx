@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useGroupActivity } from '../../hooks/useGroupActivity'
 import ActivityFeed from '../Activity/ActivityFeed'
 
@@ -31,21 +31,24 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
   const [confirmRemove, setConfirmRemove] = useState(null) // user_id pending confirm
   const [activeTab, setActiveTab] = useState('members') // 'members' | 'activity'
   const { events, loading: activityLoading } = useGroupActivity(groupId)
+  const onCurrentUserRef = useRef(onCurrentUser)
+  useEffect(() => { onCurrentUserRef.current = onCurrentUser }, [onCurrentUser])
 
   const load = useCallback(() => {
     setLoading(true)
     fetchGroupMembers(groupId)
       .then(data => {
         setMembers(data)
-        if (onCurrentUser) {
+        const cb = onCurrentUserRef.current
+        if (cb) {
           const idx = data.findIndex(m => m.user_id === currentUserId)
           if (idx !== -1) {
-            onCurrentUser({ rank: idx + 1, points: data[idx].total_points, displayName: data[idx].display_name })
+            cb({ rank: idx + 1, points: data[idx].total_points, displayName: data[idx].display_name })
           }
         }
       })
       .finally(() => setLoading(false))
-  }, [groupId, fetchGroupMembers, currentUserId, onCurrentUser])
+  }, [groupId, fetchGroupMembers, currentUserId])
 
   useEffect(() => { load() }, [load])
 
