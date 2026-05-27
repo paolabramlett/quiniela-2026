@@ -31,24 +31,28 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
   const [confirmRemove, setConfirmRemove] = useState(null) // user_id pending confirm
   const [activeTab, setActiveTab] = useState('members') // 'members' | 'activity'
   const { events, loading: activityLoading } = useGroupActivity(groupId)
+  const fetchGroupMembersRef = useRef(fetchGroupMembers)
   const onCurrentUserRef = useRef(onCurrentUser)
+  const currentUserIdRef = useRef(currentUserId)
+  useEffect(() => { fetchGroupMembersRef.current = fetchGroupMembers }, [fetchGroupMembers])
   useEffect(() => { onCurrentUserRef.current = onCurrentUser }, [onCurrentUser])
+  useEffect(() => { currentUserIdRef.current = currentUserId }, [currentUserId])
 
   const load = useCallback(() => {
     setLoading(true)
-    fetchGroupMembers(groupId)
+    fetchGroupMembersRef.current(groupId)
       .then(data => {
         setMembers(data)
         const cb = onCurrentUserRef.current
         if (cb) {
-          const idx = data.findIndex(m => m.user_id === currentUserId)
+          const idx = data.findIndex(m => m.user_id === currentUserIdRef.current)
           if (idx !== -1) {
             cb({ rank: idx + 1, points: data[idx].total_points, displayName: data[idx].display_name })
           }
         }
       })
       .finally(() => setLoading(false))
-  }, [groupId, fetchGroupMembers, currentUserId])
+  }, [groupId])
 
   useEffect(() => { load() }, [load])
 
