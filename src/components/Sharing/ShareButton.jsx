@@ -4,7 +4,7 @@ import { useShareCard } from '../../hooks/useShareCard'
 import ShareCard from './ShareCard'
 
 export default function ShareButton({
-  displayName, rank, points, correctPredictions, totalMatches, groupName, inviteCode,
+  displayName, rank, points, correctPredictions, totalMatches, groupName, inviteCode, compact = false,
 }) {
   const cardRef = useRef(null)
   const { share, sharing, copied } = useShareCard(cardRef, {
@@ -30,14 +30,18 @@ export default function ShareButton({
       <button
         onClick={share}
         disabled={sharing}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-line text-xs font-bold text-gray-400 hover:text-white hover:border-gray-500 transition-colors disabled:opacity-50"
+        className={compact
+          ? "text-gray-700 hover:text-white transition-colors disabled:opacity-50 text-sm"
+          : "flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-card border border-line text-xs font-bold text-gray-400 hover:text-white hover:border-gray-500 transition-colors disabled:opacity-50"
+        }
+        title={compact ? 'Compartir' : undefined}
       >
         {sharing ? (
           <span className="inline-block w-3 h-3 border-2 border-gray-600 border-t-white rounded-full animate-spin" />
         ) : (
           <span aria-hidden="true">📤</span>
         )}
-        Compartir
+        {!compact && 'Compartir'}
       </button>
 
       {copied && (

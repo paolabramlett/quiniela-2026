@@ -7,6 +7,7 @@ import { useGroups } from '../../hooks/useGroups'
 import CreateGroupModal from './CreateGroupModal'
 import JoinGroupModal from './JoinGroupModal'
 import GroupLeaderboard from './GroupLeaderboard'
+import ShareButton from '../Sharing/ShareButton'
 import PaywallModal from './PaywallModal'
 import PaymentSuccessScreen from './PaymentSuccessScreen'
 
@@ -36,6 +37,7 @@ export default function GroupsPage() {
   const [savingEdit, setSavingEdit] = useState(false)
   const [deletingGroup, setDeletingGroup] = useState(null)
   const [cancelledMsg, setCancelledMsg] = useState(false)
+  const [userRankData, setUserRankData] = useState({}) // groupId → { rank, points, displayName }
 
   // Handle ?payment=success|cancelled on mount
   useEffect(() => {
@@ -220,6 +222,18 @@ export default function GroupsPage() {
                     >
                       {copiedCode === group.invite_code ? '✓ Copiado' : 'Copiar'}
                     </button>
+                    {userRankData[group.id] && (
+                      <div onClick={e => e.stopPropagation()}>
+                        <ShareButton
+                          displayName={userRankData[group.id].displayName}
+                          rank={userRankData[group.id].rank}
+                          points={userRankData[group.id].points}
+                          groupName={group.name}
+                          inviteCode={group.invite_code}
+                          compact
+                        />
+                      </div>
+                    )}
                     {isCreator && (
                       <button
                         onClick={e => startEdit(e, group)}
@@ -276,6 +290,7 @@ export default function GroupsPage() {
                     currentUserId={user?.id}
                     groupName={group.name}
                     inviteCode={group.invite_code}
+                    onCurrentUser={data => setUserRankData(prev => ({ ...prev, [group.id]: data }))}
                   />
                 </div>
               )}

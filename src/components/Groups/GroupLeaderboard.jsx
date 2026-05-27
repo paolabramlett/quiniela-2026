@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react'
-import ShareButton from '../Sharing/ShareButton'
 import { useGroupActivity } from '../../hooks/useGroupActivity'
 import ActivityFeed from '../Activity/ActivityFeed'
 
@@ -25,7 +24,7 @@ function InitialsAvatar({ name, size = 'md' }) {
   )
 }
 
-export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMember, isCreator, currentUserId, groupName, inviteCode }) {
+export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMember, isCreator, currentUserId, groupName, inviteCode, onCurrentUser }) {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [removingId, setRemovingId] = useState(null)
@@ -36,9 +35,17 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
   const load = useCallback(() => {
     setLoading(true)
     fetchGroupMembers(groupId)
-      .then(setMembers)
+      .then(data => {
+        setMembers(data)
+        if (onCurrentUser) {
+          const idx = data.findIndex(m => m.user_id === currentUserId)
+          if (idx !== -1) {
+            onCurrentUser({ rank: idx + 1, points: data[idx].total_points, displayName: data[idx].display_name })
+          }
+        }
+      })
       .finally(() => setLoading(false))
-  }, [groupId, fetchGroupMembers])
+  }, [groupId, fetchGroupMembers, currentUserId, onCurrentUser])
 
   useEffect(() => { load() }, [load])
 
@@ -139,17 +146,6 @@ export default function GroupLeaderboard({ groupId, fetchGroupMembers, removeMem
                       {member.total_points}
                       <span className="text-[10px] text-gray-600 ml-0.5 font-sans font-bold">pts</span>
                     </span>
-
-                    {/* Share button — only for current user */}
-                    {isMe && (
-                      <ShareButton
-                        displayName={member.display_name}
-                        rank={idx + 1}
-                        points={member.total_points}
-                        groupName={groupName}
-                        inviteCode={inviteCode}
-                      />
-                    )}
 
                     {/* Remove button — only for creator, not self */}
                     {canRemove && !isConfirming && (
