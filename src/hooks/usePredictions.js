@@ -6,6 +6,7 @@ import { isMatchLocked } from '../utils/scoring'
 export const usePredictions = () => {
   const { user } = useAuth()
   const [matches, setMatches] = useState([])
+  const [results, setResults] = useState({}) // { matchId: { result, winner_team } }
   const [groupPredictions, setGroupPredictions] = useState({})   // { matchId: 'home'|'draw'|'away' }
   const [advancementPredictions, setAdvancementPredictions] = useState({}) // { groupLetter: ['Team1','Team2'] }
   const [knockoutPredictions, setKnockoutPredictions] = useState({}) // { matchId: 'TeamName' }
@@ -34,8 +35,9 @@ export const usePredictions = () => {
   const fetchAll = async () => {
     setLoading(true)
     try {
-      const [matchesRes, gspRes, gapRes, kpRes] = await Promise.all([
+      const [matchesRes, resultsRes, gspRes, gapRes, kpRes] = await Promise.all([
         supabase.from('matches').select('*').order('kickoff_at'),
+        supabase.from('match_results').select('*'),
         supabase.from('group_stage_predictions').select('*').eq('user_id', user.id),
         supabase.from('group_advancement_predictions').select('*').eq('user_id', user.id),
         supabase.from('knockout_predictions').select('*').eq('user_id', user.id),
@@ -44,6 +46,10 @@ export const usePredictions = () => {
       if (matchesRes.error) throw matchesRes.error
 
       setMatches(matchesRes.data)
+
+      const res = {}
+      resultsRes.data?.forEach(r => { res[r.match_id] = r })
+      setResults(res)
 
       const gsp = {}
       gspRes.data?.forEach(p => { gsp[p.match_id] = p.prediction })
@@ -145,6 +151,7 @@ export const usePredictions = () => {
     matches,
     matchesByGroup,
     knockoutMatches,
+    results,
     groupPredictions,
     advancementPredictions,
     knockoutPredictions,

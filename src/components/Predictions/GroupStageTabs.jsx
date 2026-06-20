@@ -3,7 +3,7 @@ import GroupTab from './GroupTab'
 
 const GROUP_LETTERS = ['A','B','C','D','E','F','G','H','I','J','K','L']
 
-export default function GroupStageTabs({ matchesByGroup, groupPredictions, advancementPredictions, onPredict, onAdvancement }) {
+export default function GroupStageTabs({ matchesByGroup, groupPredictions, advancementPredictions, results, onPredict, onAdvancement }) {
   const [active, setActive] = useState('A')
 
   return (
@@ -31,6 +31,7 @@ export default function GroupStageTabs({ matchesByGroup, groupPredictions, advan
           matches={matchesByGroup[active]}
           groupPredictions={groupPredictions}
           advancementPrediction={advancementPredictions[active]}
+          results={results}
           onPredict={onPredict}
           onAdvancement={onAdvancement}
         />

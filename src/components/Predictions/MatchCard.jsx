@@ -9,10 +9,13 @@ const CHOICE_SELECTED = {
 }
 
 // showDraw=false for knockout rounds (no draw possible)
-export default function MatchCard({ match, prediction, onPredict, showDraw = true }) {
+// result='home'|'draw'|'away' once the match has been played; null while pending
+export default function MatchCard({ match, prediction, result = null, onPredict, showDraw = true }) {
   const locked = isMatchLocked(match.kickoff_at)
   const countdown = getCountdownLabel(match.kickoff_at)
   const isUrgent = !locked && countdown && !countdown.includes('h')
+  const hasResult = result !== null
+  const isCorrect = hasResult && prediction === result
 
   const choices = [
     { value: 'home', label: '1', ariaLabel: match.home_team },
@@ -20,8 +23,15 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
     { value: 'away', label: '2', ariaLabel: match.away_team },
   ]
 
+  const resultLabel = hasResult
+    ? result === 'home' ? match.home_team
+    : result === 'away' ? match.away_team
+    : 'Empate'
+    : null
+
   return (
-    <div className={`bg-card border border-line rounded-xl overflow-hidden transition-opacity ${locked ? 'opacity-50' : ''}`}>
+    <div className={`bg-card border rounded-xl overflow-hidden transition-opacity
+      ${hasResult ? (isCorrect ? 'border-success/50' : 'border-line') : locked ? 'opacity-50 border-line' : 'border-line'}`}>
       {/* Match row */}
       <div className="flex items-center gap-2 px-4 py-3">
         {/* Home team */}
@@ -33,6 +43,7 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
         <div className="flex gap-1.5 flex-shrink-0">
           {choices.map(({ value, label, ariaLabel }) => {
             const isSelected = prediction === value
+            const isActualResult = hasResult && result === value
             return (
               <button
                 key={value}
@@ -44,6 +55,7 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
                     ? CHOICE_SELECTED[value]
                     : 'bg-surface border-line text-gray-500 hover:border-gray-400 hover:text-white'
                   }
+                  ${isActualResult ? 'ring-2 ring-offset-2 ring-offset-card ring-success' : ''}
                   disabled:cursor-not-allowed`}
               >
                 {label}
@@ -59,13 +71,27 @@ export default function MatchCard({ match, prediction, onPredict, showDraw = tru
       </div>
 
       {/* Countdown / lock bar */}
-      {countdown && (
+      {countdown && !hasResult && (
         <div className={`px-4 pb-2.5 flex justify-end`}>
           <span className={`text-[10px] font-bold uppercase tracking-widest ${
             locked ? 'text-gray-700' : isUrgent ? 'text-primary' : 'text-gray-700'
           }`}>
             {locked ? '🔒 Cerrado' : `⏱ ${countdown}`}
           </span>
+        </div>
+      )}
+
+      {/* Result bar — only once the match has a final result */}
+      {hasResult && (
+        <div className="px-4 pb-2.5 flex items-center justify-between">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600">
+            Resultado: {resultLabel}
+          </span>
+          {prediction && (
+            <span className={`text-[10px] font-bold uppercase tracking-widest ${isCorrect ? 'text-success' : 'text-danger'}`}>
+              {isCorrect ? '✓ Acertaste' : '✗ Fallaste'}
+            </span>
+          )}
         </div>
       )}
     </div>

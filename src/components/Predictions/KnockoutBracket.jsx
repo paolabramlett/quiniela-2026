@@ -17,7 +17,7 @@ const PHASE_ACCENT = {
 // Expected number of matches per phase — always show the full bracket structure
 const PHASE_SLOTS = { r16: 8, qf: 4, sf: 2, final: 1 }
 
-export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, onPredict }) {
+export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, results, onPredict }) {
   const byPhase = knockoutMatches.reduce((acc, m) => {
     if (!acc[m.phase]) acc[m.phase] = []
     acc[m.phase].push(m)
@@ -52,6 +52,11 @@ export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, 
                     prediction={
                       knockoutPredictions[match.id] === match.home_team ? 'home'
                       : knockoutPredictions[match.id] === match.away_team ? 'away'
+                      : null
+                    }
+                    result={
+                      results[match.id]?.winner_team === match.home_team ? 'home'
+                      : results[match.id]?.winner_team === match.away_team ? 'away'
                       : null
                     }
                     onPredict={(id, side) => {

@@ -6,7 +6,7 @@ import KnockoutBracket from './KnockoutBracket'
 export default function PredictionsPage() {
   const [tab, setTab] = useState('groups')
   const {
-    matchesByGroup, knockoutMatches,
+    matchesByGroup, knockoutMatches, results,
     groupPredictions, advancementPredictions, knockoutPredictions,
     loading, error,
     saveGroupPrediction, saveAdvancementPrediction, saveKnockoutPrediction,
@@ -49,6 +49,7 @@ export default function PredictionsPage() {
           matchesByGroup={matchesByGroup}
           groupPredictions={groupPredictions}
           advancementPredictions={advancementPredictions}
+          results={results}
           onPredict={saveGroupPrediction}
           onAdvancement={saveAdvancementPrediction}
         />
@@ -56,6 +57,7 @@ export default function PredictionsPage() {
         <KnockoutBracket
           knockoutMatches={knockoutMatches}
           knockoutPredictions={knockoutPredictions}
+          results={results}
           onPredict={saveKnockoutPrediction}
         />
       )}

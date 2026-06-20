@@ -12,6 +12,7 @@ export default {
         accent:  '#00C4A7',
         gold:    '#F5C400',
         danger:  '#E8351E',
+        success: '#22C55E',
         bg:      '#080808',
         card:    '#111111',
         surface: '#1A1A1A',
