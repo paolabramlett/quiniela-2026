@@ -1,6 +1,7 @@
 import MatchCard from './MatchCard'
 
 const PHASE_LABELS = {
+  r32:   'Dieciseisavos de Final',
   r16:   'Octavos de Final',
   qf:    'Cuartos de Final',
   sf:    'Semifinales',
@@ -8,6 +9,7 @@ const PHASE_LABELS = {
 }
 
 const PHASE_ACCENT = {
+  r32:   'text-gray-500',
   r16:   'text-gray-500',
   qf:    'text-accent',
   sf:    'text-gold',
@@ -15,7 +17,7 @@ const PHASE_ACCENT = {
 }
 
 // Expected number of matches per phase — always show the full bracket structure
-const PHASE_SLOTS = { r16: 8, qf: 4, sf: 2, final: 1 }
+const PHASE_SLOTS = { r32: 16, r16: 8, qf: 4, sf: 2, final: 1 }
 
 export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, results, onPredict }) {
   const byPhase = knockoutMatches.reduce((acc, m) => {
@@ -28,7 +30,7 @@ export default function KnockoutBracket({ knockoutMatches, knockoutPredictions, 
 
   return (
     <div className="space-y-8">
-      {['r16', 'qf', 'sf', 'final'].map(phase => {
+      {['r32', 'r16', 'qf', 'sf', 'final'].map(phase => {
         const matches = byPhase[phase] ?? []
         const placeholdersNeeded = Math.max(0, PHASE_SLOTS[phase] - matches.length)
 

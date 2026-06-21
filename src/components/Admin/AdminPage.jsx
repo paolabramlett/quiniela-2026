@@ -6,7 +6,7 @@ import AdvancementResultForm from './AdvancementResultForm'
 import AccessesTab from './AccessesTab'
 import UsersTab from './UsersTab'
 
-const PHASE_LABELS = { group_stage: 'Fase de Grupos', r16: 'Octavos de Final', qf: 'Cuartos de Final', sf: 'Semifinales', final: 'Final' }
+const PHASE_LABELS = { group_stage: 'Fase de Grupos', r32: 'Dieciseisavos de Final', r16: 'Octavos de Final', qf: 'Cuartos de Final', sf: 'Semifinales', final: 'Final' }
 const ADMIN_PASSWORD = 'quiniela2026admin'
 
 function PasswordGate({ onUnlock }) {
@@ -121,7 +121,7 @@ export default function AdminPage() {
             <p className={`text-xs font-semibold mb-4 ${syncResult.ok ? 'text-accent' : 'text-danger'}`}>{syncResult.msg}</p>
           )}
 
-          {['group_stage', 'r16', 'qf', 'sf', 'final'].map(phase => (
+          {['group_stage', 'r32', 'r16', 'qf', 'sf', 'final'].map(phase => (
             matchesByPhase[phase]?.length > 0 && (
               <div key={phase} className="mb-8">
                 <div className="flex items-center gap-3 mb-3">

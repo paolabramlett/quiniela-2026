@@ -39,6 +39,7 @@ describe('getCountdownLabel', () => {
 
 describe('pointsForPhase', () => {
   it('returns 5 for group_stage', () => expect(pointsForPhase('group_stage')).toBe(5))
+  it('returns 10 for r32', () => expect(pointsForPhase('r32')).toBe(10))
   it('returns 15 for r16', () => expect(pointsForPhase('r16')).toBe(15))
   it('returns 20 for qf', () => expect(pointsForPhase('qf')).toBe(20))
   it('returns 25 for sf', () => expect(pointsForPhase('sf')).toBe(25))

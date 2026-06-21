@@ -3,6 +3,7 @@ import { getFlag } from '../../utils/teamFlags'
 
 const PHASE_LABELS = {
   group_stage: 'Grupo',
+  r32:         'Dieciseisavos',
   r16:         'Octavos',
   qf:          'Cuartos',
   sf:          'Semifinal',

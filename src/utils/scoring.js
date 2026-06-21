@@ -17,6 +17,6 @@ export const getCountdownLabel = (kickoffAt) => {
 }
 
 export const pointsForPhase = (phase) => {
-  const map = { group_stage: 5, r16: 15, qf: 20, sf: 25, final: 50 }
+  const map = { group_stage: 5, r32: 10, r16: 15, qf: 20, sf: 25, final: 50 }
   return map[phase] ?? 0
 }
