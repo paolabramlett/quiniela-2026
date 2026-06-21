@@ -53,6 +53,10 @@ export const useAdmin = () => {
       .upsert({ match_id: matchId, result: result ?? null, winner_team: winner_team ?? null, entered_by: user.id }, { onConflict: 'match_id' })
 
     if (error) throw error
+
+    const { error: activityError } = await supabase.rpc('generate_match_activity', { p_match_id: matchId })
+    if (activityError) throw activityError
+
     await fetchAll()
   }
 
