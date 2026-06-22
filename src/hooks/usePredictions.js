@@ -89,12 +89,12 @@ export const usePredictions = () => {
   }, [matches, user])
 
   const saveAdvancementPrediction = useCallback(async (groupLetter, teams) => {
-    // Check if first match of this group is locked
-    const firstMatch = matches
+    // Advancement picks lock with the group's last match, same as the UI
+    const lastMatch = matches
       .filter(m => m.phase === 'group_stage' && m.group_letter === groupLetter)
-      .sort((a, b) => new Date(a.kickoff_at) - new Date(b.kickoff_at))[0]
+      .sort((a, b) => new Date(b.kickoff_at) - new Date(a.kickoff_at))[0]
 
-    if (firstMatch && isMatchLocked(firstMatch.kickoff_at)) return
+    if (lastMatch && isMatchLocked(lastMatch.kickoff_at)) return
 
     // Update local state immediately so buttons respond on first click
     setAdvancementPredictions(prev => ({ ...prev, [groupLetter]: teams }))
