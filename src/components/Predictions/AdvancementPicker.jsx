@@ -1,8 +1,8 @@
 import { getFlag } from '../../utils/teamFlags'
 
-export default function AdvancementPicker({ teams, selection, onSelect, locked }) {
+export default function AdvancementPicker({ teams, selection, onSelect, locked, clinched = [], eliminated = [] }) {
   const toggle = (team) => {
-    if (locked) return
+    if (locked || clinched.includes(team) || eliminated.includes(team)) return
     if (selection.includes(team)) {
       onSelect(selection.filter(t => t !== team))
     } else if (selection.length < 2) {
@@ -18,11 +18,13 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
       <div className="flex flex-wrap gap-2">
         {teams.map(team => {
           const selected = selection.includes(team)
+          const isClinched = clinched.includes(team)
+          const isEliminated = eliminated.includes(team)
           const maxed = selection.length === 2 && !selected
           return (
             <button
               key={team}
-              disabled={locked || maxed}
+              disabled={locked || isClinched || isEliminated || maxed}
               onClick={() => toggle(team)}
               aria-label={team}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all
@@ -30,10 +32,13 @@ export default function AdvancementPicker({ teams, selection, onSelect, locked }
                   ? 'bg-accent border-accent text-black'
                   : 'bg-surface border-line text-gray-400 hover:border-gray-500 hover:text-white'
                 }
-                ${maxed ? 'opacity-30' : ''}
+                ${isClinched ? 'ring-2 ring-offset-2 ring-offset-card ring-success' : ''}
+                ${isEliminated ? 'opacity-30 line-through' : ''}
+                ${maxed && !isEliminated ? 'opacity-30' : ''}
                 disabled:cursor-not-allowed`}
             >
               <span aria-hidden="true">{getFlag(team)}</span> {team}
+              {isClinched && ' ✓'}
             </button>
           )
         })}
