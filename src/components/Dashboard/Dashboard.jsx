@@ -7,6 +7,7 @@ import { getFlag } from '../../utils/teamFlags'
 import { useRecentResults } from '../../hooks/useRecentResults'
 import RecentResults from './RecentResults'
 import ShareButton from '../Sharing/ShareButton'
+import AdvancementReminder from './AdvancementReminder'
 
 const quickActions = [
   { label: 'Hacer Picks', sub: 'Elige tus favoritos', to: '/predictions', color: 'bg-primary', icon: '🎯' },
@@ -17,7 +18,7 @@ const quickActions = [
 export default function Dashboard() {
   const { profile } = useAuth()
   const { userEntry } = useLeaderboard()
-  const { matches } = usePredictions()
+  const { matches, matchesByGroup, advancementPredictions } = usePredictions()
   const { results: recentResults, loading: recentLoading } = useRecentResults()
   const navigate = useNavigate()
 
@@ -69,6 +70,11 @@ export default function Dashboard() {
             />
           </div>
         )}
+      </div>
+
+      {/* Advancement pick reminder */}
+      <div className="animate-fade-up stagger-3">
+        <AdvancementReminder matchesByGroup={matchesByGroup} advancementPredictions={advancementPredictions} />
       </div>
 
       {/* Next match countdown */}

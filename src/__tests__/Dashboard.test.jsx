@@ -13,7 +13,7 @@ vi.mock('../hooks/useLeaderboard', () => ({
   useLeaderboard: () => ({ userEntry: { total_points: 30, correct_predictions: 3, rank: 2 } }),
 }))
 vi.mock('../hooks/usePredictions', () => ({
-  usePredictions: () => ({ matches: [] }),
+  usePredictions: () => ({ matches: [], matchesByGroup: {}, advancementPredictions: {} }),
 }))
 vi.mock('../hooks/useRecentResults', () => ({
   useRecentResults: () => ({
