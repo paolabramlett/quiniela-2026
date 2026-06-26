@@ -32,6 +32,24 @@ describe('computeGroupAdvancement', () => {
     expect(eliminated).toEqual([])
   })
 
+  it('leaves teams tied at the qualification cutoff as contested, not eliminated', () => {
+    const matches = makeMatches([
+      ['Canada', 'Bosnia-Herzegovina'], ['Qatar', 'Switzerland'],
+      ['Switzerland', 'Bosnia-Herzegovina'], ['Canada', 'Qatar'],
+      ['Switzerland', 'Canada'], ['Bosnia-Herzegovina', 'Qatar'],
+    ])
+    const results = {
+      m0: { result: 'draw' }, m1: { result: 'draw' }, m2: { result: 'home' },
+      m3: { result: 'home' }, m4: { result: 'home' }, m5: { result: 'home' },
+    }
+    // Points: Switzerland=7, Canada=4, Bosnia=4 (tied for the 2nd spot), Qatar=1
+    const { clinched, eliminated } = computeGroupAdvancement(matches, results)
+    expect(clinched).toEqual(['Switzerland'])
+    expect(eliminated).toEqual(['Qatar'])
+    expect(eliminated).not.toContain('Canada')
+    expect(eliminated).not.toContain('Bosnia-Herzegovina')
+  })
+
   it('resolves both spots once every match is finished with no ties at the cutoff', () => {
     const matches = makeMatches([['A', 'B'], ['C', 'D'], ['A', 'C'], ['B', 'D'], ['A', 'D'], ['B', 'C']])
     const results = {

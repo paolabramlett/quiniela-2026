@@ -32,23 +32,30 @@ export function computeGroupAdvancement(matches, results) {
     scenarios = scenarios.flatMap(scenario => OUTCOMES.map(o => applyOutcome(scenario, m, o)))
   })
 
-  // In each scenario, a team only counts as "definitely advancing" if its
-  // points strictly beat the 3rd-place total — anything tied at the cutoff
-  // is ambiguous without tiebreaker data (goal difference, head-to-head)
+  // In each scenario a team only counts as "definitely advancing" if its
+  // points strictly beat the 3rd-place total, and "definitely eliminated"
+  // only if its points are strictly below the 2nd-place total. A team
+  // tied at the cutoff (e.g. tied for 2nd with the 3rd-place team) is
+  // neither — it's genuinely ambiguous without tiebreaker data (goal
+  // difference, head-to-head), so it must not be marked eliminated just
+  // because it didn't clinch.
   const advancingCount = {}
-  teams.forEach(t => { advancingCount[t] = 0 })
+  const eliminatedCount = {}
+  teams.forEach(t => { advancingCount[t] = 0; eliminatedCount[t] = 0 })
 
   scenarios.forEach(scenario => {
     const ranked = [...teams].sort((a, b) => scenario[b] - scenario[a])
+    const secondPlacePoints = scenario[ranked[1]]
     const thirdPlacePoints = scenario[ranked[2]]
     teams.forEach(t => {
       if (scenario[t] > thirdPlacePoints) advancingCount[t]++
+      else if (scenario[t] < secondPlacePoints) eliminatedCount[t]++
     })
   })
 
   const total = scenarios.length
   const clinched = teams.filter(t => advancingCount[t] === total)
-  const eliminated = teams.filter(t => advancingCount[t] === 0)
+  const eliminated = teams.filter(t => eliminatedCount[t] === total)
 
   return { clinched, eliminated }
 }
