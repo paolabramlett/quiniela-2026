@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { usePredictions } from '../../hooks/usePredictions'
 import GroupStageTabs from './GroupStageTabs'
 import KnockoutBracket from './KnockoutBracket'
 
 export default function PredictionsPage() {
-  const [tab, setTab] = useState('groups')
+  const location = useLocation()
+  const [tab, setTab] = useState(location.state?.tab === 'knockout' ? 'knockout' : 'groups')
   const {
     matchesByGroup, knockoutMatches, results,
     groupPredictions, advancementPredictions, knockoutPredictions,

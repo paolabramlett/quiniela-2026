@@ -8,6 +8,7 @@ import { useRecentResults } from '../../hooks/useRecentResults'
 import RecentResults from './RecentResults'
 import ShareButton from '../Sharing/ShareButton'
 import AdvancementReminder from './AdvancementReminder'
+import KnockoutAnnouncementBanner from './KnockoutAnnouncementBanner'
 
 const quickActions = [
   { label: 'Hacer Picks', sub: 'Elige tus favoritos', to: '/predictions', color: 'bg-primary', icon: '🎯' },
@@ -70,6 +71,11 @@ export default function Dashboard() {
             />
           </div>
         )}
+      </div>
+
+      {/* Knockout stage announcement */}
+      <div className="animate-fade-up stagger-3">
+        <KnockoutAnnouncementBanner matches={matches} />
       </div>
 
       {/* Advancement pick reminder */}
