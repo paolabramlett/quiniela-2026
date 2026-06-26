@@ -13,6 +13,7 @@ const corsHeaders = {
 
 function getPhase(stage: string): string | null {
   if (stage === 'GROUP_STAGE') return 'group_stage'
+  if (stage === 'LAST_32') return 'r32'
   if (stage === 'LAST_16') return 'r16'
   if (stage === 'QUARTER_FINALS') return 'qf'
   if (stage === 'SEMI_FINALS') return 'sf'
@@ -61,6 +62,7 @@ Deno.serve(async (req) => {
     let matchesSkipped = 0
     let resultsUpserted = 0
     const errors: string[] = []
+    const syncedPhases = new Set<string>()
 
     for (const m of matches) {
       const phase = getPhase(m.stage)
@@ -97,6 +99,7 @@ Deno.serve(async (req) => {
         continue
       }
       matchesUpserted++
+      syncedPhases.add(phase)
 
       if (status !== 'finished') continue
 
@@ -122,8 +125,27 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Knockout phases were originally seeded with placeholder "TBD vs TBD"
+    // rows (no api_fixture_id) so the bracket had something to render
+    // before the real draw existed. Once a phase gets its first real,
+    // api-sourced fixture, those placeholders are stale leftovers — clear
+    // them so the bracket doesn't show duplicate/extra slots.
+    let placeholdersRemoved = 0
+    for (const phase of syncedPhases) {
+      if (phase === 'group_stage') continue
+      const { error: cleanupErr, count } = await supabase
+        .from('matches')
+        .delete({ count: 'exact' })
+        .eq('phase', phase)
+        .is('api_fixture_id', null)
+        .eq('home_team', 'TBD')
+        .eq('away_team', 'TBD')
+      if (cleanupErr) errors.push(`cleanup ${phase}: ${cleanupErr.message}`)
+      else placeholdersRemoved += count ?? 0
+    }
+
     return new Response(
-      JSON.stringify({ success: true, matchesUpserted, matchesSkipped, resultsUpserted, errors }),
+      JSON.stringify({ success: true, matchesUpserted, matchesSkipped, resultsUpserted, placeholdersRemoved, errors }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
